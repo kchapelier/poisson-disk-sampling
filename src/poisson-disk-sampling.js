@@ -17,8 +17,9 @@ var manhattanDistanceN = require('mathp/functions/manhattanDistanceN'),
  */
 var Poisson = function (shape, minDistance, maxTries, rng) {
     this.shape = shape;
+    this.dimension = this.shape.length;
     this.minDistance = minDistance;
-    this.cellSize = minDistance / Math.sqrt(shape.length);
+    this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
     this.rng = rng || Math.random;
     this.randomDistAmount = 1;
@@ -26,9 +27,9 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
     this.distanceFunction = euclideanDistanceN;
     //this.distanceFunction = manhattanDistanceN; //FIXME does not work correctly, why ?
 
-    this.neighbourhood = moore(2, this.shape.length);
+    this.neighbourhood = moore(2, this.dimension);
     var origin = [];
-    for (var dimension = 0; dimension < this.shape.length; dimension++) {
+    for (var dimension = 0; dimension < this.dimension; dimension++) {
         origin.push(0);
     }
     this.neighbourhood.push(origin);
@@ -40,7 +41,7 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
     /* multidimension grid thing */
     this.gridShape = [];
 
-    for (var i = 0; i < shape.length; i++) {
+    for (var i = 0; i < this.dimension; i++) {
         this.gridShape.push(Math.ceil(shape[i] / this.cellSize));
     }
     //console.log(this.gridShape);
@@ -52,9 +53,9 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
  * @returns {*} The point added to the grid
  */
 Poisson.prototype.addRandomPoint = function () {
-    var point = new Array(this.shape.length);
+    var point = new Array(this.dimension);
 
-    for (var i = 0; i < this.shape.length; i++) {
+    for (var i = 0; i < this.dimension; i++) {
         point[i] = this.rng() * this.shape[i];
     }
 
@@ -76,7 +77,7 @@ Poisson.prototype.addPoint = function (point) {
         dimension,
         currentDimensionValue;
 
-    for (dimension = 0; dimension < this.shape.length; dimension++) {
+    for (dimension = 0; dimension < this.dimension; dimension++) {
         internalArrayIndex += ((point[dimension] / this.cellSize) | 0) * stride[dimension];
     }
 
@@ -92,10 +93,8 @@ Poisson.prototype.addPoint = function (point) {
  * @returns {boolean} Whether the point is in the neighbourhood of another point
  * @protected
  */
-Poisson.prototype.inNeighbourhood = function (point, minDist) {
-
-    /* */
-    var dimensionNumber = this.shape.length,
+Poisson.prototype.inNeighbourhood = function (point) {
+    var dimensionNumber = this.dimension,
         stride = this.grid.stride,
         neighbourIndex,
         internalArrayIndex,
@@ -124,34 +123,11 @@ Poisson.prototype.inNeighbourhood = function (point, minDist) {
             //console.log(internalArrayIndex, this.grid.data[internalArrayIndex], this.samplePoints.length, existingPoint);
 
             //console.log(point, existingPoint, this.distanceFunction(point, existingPoint), this.distanceFunction(point, existingPoint) < minDist);
-            if (this.distanceFunction(point, existingPoint) < minDist) {
+            if (this.distanceFunction(point, existingPoint) < this.minDistance) {
                 return true;
             }
         }
     }
-
-
-
-    /*/
-    var i = (point[0] / this.cellSize) | 0,
-        j = (point[1] / this.cellSize) | 0;
-
-    var startI = Math.max(i - 2, 0),
-        endI = Math.min(i + 2, this.gridWidth);
-
-    var startJ = Math.max(j - 2, 0),
-        endJ = Math.min(j + 2, this.gridHeight);
-
-    for (i = startI; i <= endI; i++) {
-        for (j = startJ; j <= endJ; j++) {
-            var existingPoint = this.grid[j * this.gridWidth + i];
-
-            if (existingPoint && this.distanceFunction(point, existingPoint) < minDist) {
-                return true;
-            }
-        }
-    }
-    /* */
 
     return false;
 };
@@ -180,15 +156,24 @@ Poisson.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            newPoint = sphereRandom(this.shape.length);
             distance = this.minDistance * (1 + this.rng());
 
-            for (var i = 0; inShape && i < this.shape.length; i++) {
+            if (this.dimension === 2) {
+                angle = this.rng() * Math.PI * 2;
+                newPoint = [
+                    Math.cos(angle),
+                    Math.sin(angle)
+                ]; // avoiding creating an array at each tries would be nice but would require changing the sphereRandom API
+            } else {
+                newPoint = sphereRandom(this.dimension);
+            }
+
+            for (var i = 0; inShape && i < this.dimension; i++) {
                 newPoint[i] = currentPoint[i] + newPoint[i] * distance;
                 inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
             }
 
-            if (inShape && !this.inNeighbourhood(newPoint, this.minDistance)) {
+            if (inShape && !this.inNeighbourhood(newPoint)) {
                 return this.addPoint(newPoint);
             }
         }
