@@ -7,6 +7,42 @@ var manhattanDistanceN = require('mathp/functions/manhattanDistanceN'),
     moore = require('moore'),
     sphereRandom = require('sphere-random');
 
+var getNeighbourhood = function (dimensionNumber) {
+    var neighbourhood = moore(2, dimensionNumber),
+        origin = [],
+        dimension;
+
+    for (dimension = 0; dimension < dimensionNumber; dimension++) {
+        origin.push(0);
+    }
+
+    neighbourhood.push(origin);
+
+    // sort by ascending distance to optimize proximity checks
+    // see point 5.1 in Parallel Poisson Disk Sampling by Li-Yi Wei, 2008
+    // http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.460.3061&rank=1
+    neighbourhood.sort(function (n1, n2) {
+        var squareDist1 = 0,
+            squareDist2 = 0;
+
+        for (var dimension = 0; dimension < dimensionNumber; dimension++) {
+            squareDist1 += Math.pow(n1[dimension], 2);
+            squareDist2 += Math.pow(n2[dimension], 2);
+        }
+
+        if (squareDist1 < squareDist2) {
+            return -1;
+        } else if(squareDist1 > squareDist2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    return neighbourhood;
+};
+
+
 /**
  *
  * @param shape
@@ -27,12 +63,16 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
     this.distanceFunction = euclideanDistanceN;
     //this.distanceFunction = manhattanDistanceN; //FIXME does not work correctly, why ?
 
+    /* /
     this.neighbourhood = moore(2, this.dimension);
     var origin = [];
     for (var dimension = 0; dimension < this.dimension; dimension++) {
         origin.push(0);
     }
     this.neighbourhood.push(origin);
+    /*/
+    this.neighbourhood = getNeighbourhood(this.dimension);
+    /* */
 
     this.currentPoint = null;
     this.processList = [];
