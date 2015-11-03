@@ -51,10 +51,12 @@ var getNeighbourhood = function (dimensionNumber) {
  * @param rng
  * @constructor
  */
-var Poisson = function (shape, minDistance, maxTries, rng) {
+var Poisson = function (shape, minDistance, maxDistance, maxTries, rng) {
     this.shape = shape;
     this.dimension = this.shape.length;
     this.minDistance = minDistance;
+    this.maxDistance = maxDistance || minDistance * 2;
+    this.deltaDistance = maxDistance - minDistance;
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
     this.rng = rng || Math.random;
@@ -63,16 +65,7 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
     this.distanceFunction = euclideanDistanceN;
     //this.distanceFunction = manhattanDistanceN; //FIXME does not work correctly, why ?
 
-    /* /
-    this.neighbourhood = moore(2, this.dimension);
-    var origin = [];
-    for (var dimension = 0; dimension < this.dimension; dimension++) {
-        origin.push(0);
-    }
-    this.neighbourhood.push(origin);
-    /*/
     this.neighbourhood = getNeighbourhood(this.dimension);
-    /* */
 
     this.currentPoint = null;
     this.processList = [];
@@ -84,8 +77,8 @@ var Poisson = function (shape, minDistance, maxTries, rng) {
     for (var i = 0; i < this.dimension; i++) {
         this.gridShape.push(Math.ceil(shape[i] / this.cellSize));
     }
-    //console.log(this.gridShape);
-    this.grid = zeros(this.gridShape, 'uint32'); //first float is a flag for point presence
+
+    this.grid = zeros(this.gridShape, 'uint32'); //will store references to samplePoints
 };
 
 /**
@@ -196,7 +189,7 @@ Poisson.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance * (1 + this.rng());
+            distance = this.minDistance + this.deltaDistance * this.rng();
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
