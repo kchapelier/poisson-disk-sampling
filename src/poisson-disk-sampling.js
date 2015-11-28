@@ -47,11 +47,12 @@ var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
 
 
 /**
- *
- * @param shape
- * @param minDistance
- * @param maxTries
- * @param rng
+ * PoissonDiskSampling constructor
+ * @param shape Shape of the space
+ * @param {number} minDistance Minimum distance between each points
+ * @param {number} [maxDistance] Maximum distance between each points, defaults to minDistance * 2
+ * @param {int} [maxTries] Number of times the algorithm has to try to place a point in the neighbourhood of another points, defaults to 30
+ * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
 var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxDistance, maxTries, rng) {
@@ -118,7 +119,6 @@ PoissonDiskSampling.prototype.addRandomPoint = function () {
  * Add a given point to the grid
  * @param {array} point Point
  * @returns {array} The point added to the grid
- * @protected
  */
 PoissonDiskSampling.prototype.addPoint = function (point) {
     this.processList.push(point);

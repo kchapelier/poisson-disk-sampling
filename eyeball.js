@@ -20,21 +20,8 @@ var outputPng = function (sampling) {
     save(array, 'png').pipe(process.stdout);
 };
 
-
-var p = new Poisson([1000, 1000, 200], 29, 29.3, 3);
-
-p.addRandomPoint();
-
-
-//var now = Date.now();
-
+var p = new Poisson([500, 200, 200], 20, 30, 10);
 p.fill();
-
-/*
-console.log(Date.now() - now, 'ms');
-console.log(p.samplePoints.length);
-process.exit();
-*/
 
 outputPng(p);
 

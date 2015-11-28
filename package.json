@@ -7,8 +7,23 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "eyeball": "node eyeball.js > test.png && open test.png"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kchapelier/poisson-disk-sampling.git"
+  },
+  "keywords": [
+    "poisson",
+    "noise",
+    "blue noise",
+    "sampling"
+  ],
   "author": "Kevin Chapelier",
   "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/kchapelier/poisson-disk-sampling/issues"
+  },
+  "homepage": "https://github.com/kchapelier/poisson-disk-sampling",
   "dependencies": {
     "mathp": "^1.5.0",
     "moore": "0.0.2",
