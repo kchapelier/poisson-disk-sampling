@@ -2,11 +2,10 @@
 
 var Poisson = require('./'),
     save = require('save-pixels'),
-    ndarray = require('ndarray');
+    zeros = require('zeros');
 
 var outputPng = function (sampling) {
-    var data = new Float32Array(sampling.shape[0] * sampling.shape[1]),
-        array = ndarray(data, [sampling.shape[0], sampling.shape[1]]);
+    var array = zeros([sampling.shape[0], sampling.shape[1]], 'float32');
 
     if (sampling.dimension === 2) {
         sampling.samplePoints.forEach(function (point) {
@@ -18,7 +17,6 @@ var outputPng = function (sampling) {
         });
     }
 
-
     save(array, 'png').pipe(process.stdout);
 };
 
@@ -28,7 +26,7 @@ var p = new Poisson([1000, 1000, 200], 29, 29.3, 3);
 p.addRandomPoint();
 
 
-var now = Date.now();
+//var now = Date.now();
 
 p.fill();
 

@@ -1,13 +1,16 @@
 "use strict";
 
-var manhattanDistanceN = require('mathp/functions/manhattanDistanceN'),
-    chebyshevDistanceN = require('mathp/functions/chebyshevDistanceN'),
-    euclideanDistanceN = require('mathp/functions/euclideanDistanceN'),
+var euclideanDistanceN = require('mathp/functions/euclideanDistanceN'),
     zeros = require('zeros'),
     moore = require('moore'),
-    sphereRandom = require('sphere-random');
+    sphereRandom = require('./sphere-random');
 
-var getNeighbourhood = function (dimensionNumber) {
+/**
+ * Get the neighbourhood ordered by distance, including the origin point
+ * @param {number} dimensionNumber Number of dimensions
+ * @returns {array} Neighbourhood
+ */
+var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
     var neighbourhood = moore(2, dimensionNumber),
         origin = [],
         dimension;
@@ -51,7 +54,7 @@ var getNeighbourhood = function (dimensionNumber) {
  * @param rng
  * @constructor
  */
-var Poisson = function (shape, minDistance, maxDistance, maxTries, rng) {
+var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxDistance, maxTries, rng) {
     this.shape = shape;
     this.dimension = this.shape.length;
     this.minDistance = minDistance;
@@ -60,10 +63,8 @@ var Poisson = function (shape, minDistance, maxDistance, maxTries, rng) {
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
     this.rng = rng || Math.random;
-    this.randomDistAmount = 1;
 
     this.distanceFunction = euclideanDistanceN;
-    //this.distanceFunction = manhattanDistanceN; //FIXME does not work correctly, why ?
 
     this.neighbourhood = getNeighbourhood(this.dimension);
 
@@ -71,7 +72,8 @@ var Poisson = function (shape, minDistance, maxDistance, maxTries, rng) {
     this.processList = [];
     this.samplePoints = [];
 
-    /* multidimension grid thing */
+    // cache grid
+
     this.gridShape = [];
 
     for (var i = 0; i < this.dimension; i++) {
@@ -81,11 +83,28 @@ var Poisson = function (shape, minDistance, maxDistance, maxTries, rng) {
     this.grid = zeros(this.gridShape, 'uint32'); //will store references to samplePoints
 };
 
+PoissonDiskSampling.prototype.shape = null;
+PoissonDiskSampling.prototype.dimension = null;
+PoissonDiskSampling.prototype.minDistance = null;
+PoissonDiskSampling.prototype.maxDistance = null;
+PoissonDiskSampling.prototype.deltaDistance = null;
+PoissonDiskSampling.prototype.cellSize = null;
+PoissonDiskSampling.prototype.maxTries = null;
+PoissonDiskSampling.prototype.rng = null;
+PoissonDiskSampling.prototype.distanceFunction = null;
+PoissonDiskSampling.prototype.neighbourhood = null;
+
+PoissonDiskSampling.prototype.currentPoint = null;
+PoissonDiskSampling.prototype.processList = null;
+PoissonDiskSampling.prototype.samplePoints = null;
+PoissonDiskSampling.prototype.gridShape = null;
+PoissonDiskSampling.prototype.grid = null;
+
 /**
  * Add a totally random point in the grid
- * @returns {*} The point added to the grid
+ * @returns {array} The point added to the grid
  */
-Poisson.prototype.addRandomPoint = function () {
+PoissonDiskSampling.prototype.addRandomPoint = function () {
     var point = new Array(this.dimension);
 
     for (var i = 0; i < this.dimension; i++) {
@@ -98,10 +117,10 @@ Poisson.prototype.addRandomPoint = function () {
 /**
  * Add a given point to the grid
  * @param {array} point Point
- * @returns {*} The point added to the grid
+ * @returns {array} The point added to the grid
  * @protected
  */
-Poisson.prototype.addPoint = function (point) {
+PoissonDiskSampling.prototype.addPoint = function (point) {
     this.processList.push(point);
     this.samplePoints.push(point);
 
@@ -120,13 +139,12 @@ Poisson.prototype.addPoint = function (point) {
 };
 
 /**
- * Check whether a given is in the neighbourhood of existing points
+ * Check whether a given point is in the neighbourhood of existing points
  * @param {array} point Point
- * @param {number} minDist Minimum distance
  * @returns {boolean} Whether the point is in the neighbourhood of another point
  * @protected
  */
-Poisson.prototype.inNeighbourhood = function (point) {
+PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
     var dimensionNumber = this.dimension,
         stride = this.grid.stride,
         neighbourIndex,
@@ -135,16 +153,11 @@ Poisson.prototype.inNeighbourhood = function (point) {
         currentDimensionValue,
         existingPoint;
 
-    //console.log('- - -');
-
     for (neighbourIndex = 0; neighbourIndex < this.neighbourhood.length; neighbourIndex++) {
         internalArrayIndex = 0;
 
         for (dimension = 0; dimension < dimensionNumber; dimension++) {
             currentDimensionValue = ((point[dimension] / this.cellSize) | 0) + this.neighbourhood[neighbourIndex][dimension];
-
-            //console.log(point[dimension], currentDimensionValue, this.gridShape[dimension]);
-            //console.log((point[dimension] / this.cellSize) | 0, this.neighbourhood[neighbourIndex][dimension], currentDimensionValue);
 
             if (currentDimensionValue >= 0 && currentDimensionValue < this.gridShape[dimension]) {
                 internalArrayIndex += currentDimensionValue * stride[dimension];
@@ -153,9 +166,7 @@ Poisson.prototype.inNeighbourhood = function (point) {
 
         if (this.grid.data[internalArrayIndex] !== 0) {
             existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
-            //console.log(internalArrayIndex, this.grid.data[internalArrayIndex], this.samplePoints.length, existingPoint);
 
-            //console.log(point, existingPoint, this.distanceFunction(point, existingPoint), this.distanceFunction(point, existingPoint) < minDist);
             if (this.distanceFunction(point, existingPoint) < this.minDistance) {
                 return true;
             }
@@ -165,24 +176,22 @@ Poisson.prototype.inNeighbourhood = function (point) {
     return false;
 };
 
-// http://devmag.org.za/2009/05/03/poisson-disk-sampling/
-// http://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf
-
 /**
  * Try to place a new point in the grid, returns null if it wasn't possible
  * @returns {array|null} The added point or null
  */
-Poisson.prototype.next = function () {
+PoissonDiskSampling.prototype.next = function () {
     var tries,
         angle,
         distance,
         currentPoint,
         newPoint,
-        inShape;
+        inShape,
+        i;
 
     while (this.processList.length > 0) {
         if (this.currentPoint === null) {
-            this.currentPoint = this.processList.shift(); //might want to extract randomly
+            this.currentPoint = this.processList.shift();
         }
 
         currentPoint = this.currentPoint;
@@ -196,12 +205,12 @@ Poisson.prototype.next = function () {
                 newPoint = [
                     Math.cos(angle),
                     Math.sin(angle)
-                ]; // avoiding creating an array at each tries would be nice but would require changing the sphereRandom API
+                ];
             } else {
-                newPoint = sphereRandom(this.dimension);
+                newPoint = sphereRandom(this.dimension, this.rng);
             }
 
-            for (var i = 0; inShape && i < this.dimension; i++) {
+            for (i = 0; inShape && i < this.dimension; i++) {
                 newPoint[i] = currentPoint[i] + newPoint[i] * distance;
                 inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
             }
@@ -222,19 +231,17 @@ Poisson.prototype.next = function () {
 /**
  * Automatically fill the grid, adding a random point to start the process if needed.
  * Will block the thread, probably best to use it in a web worker or child process.
+ * @returns {array} Sample points
  */
-Poisson.prototype.fill = function () {
+PoissonDiskSampling.prototype.fill = function () {
     if (this.processList.length === 0) {
         this.addRandomPoint();
     }
 
     while(this.next()) {}
+
+    return this.samplePoints;
 };
 
-Poisson.prototype.shape = null;
-Poisson.prototype.minDistance = null;
-Poisson.prototype.cellSize = null;
-Poisson.prototype.processList = null;
-Poisson.prototype.samplePoints = null;
 
-module.exports = Poisson;
+module.exports = PoissonDiskSampling;

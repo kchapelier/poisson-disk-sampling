@@ -1,8 +1,7 @@
 {
   "name": "poisson-disk-sampling",
-  "version": "0.0.0",
-  "description": "",
-  "private": true,
+  "version": "0.0.1",
+  "description": "Experimental poisson disk sampling in arbitrary dimensions",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,12 +11,10 @@
   "license": "MIT",
   "dependencies": {
     "mathp": "^1.5.0",
-    "sphere-random": "^1.0.1",
     "moore": "0.0.2",
     "zeros": "^1.0.0"
   },
   "devDependencies": {
-    "ndarray": "^1.0.18",
     "save-pixels": "^2.2.1"
   }
 }
