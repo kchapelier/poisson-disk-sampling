@@ -29,7 +29,7 @@ console.log(p.samplePoints); //array of sample points
 
 ### Result as an image
 
-<img src="https://github.com/kchapelier/cellular-automata/raw/master/img/example1.png" style="image-rendering:pixelated; width:500px;"></img>
+<img src="https://github.com/kchapelier/poisson-disk-sampling/raw/master/img/example1.png" style="image-rendering:pixelated; width:500px;"></img>
 
 ## History
 
