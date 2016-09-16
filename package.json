@@ -1,6 +1,6 @@
 {
   "name": "poisson-disk-sampling",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Experimental poisson disk sampling in arbitrary dimensions",
   "main": "index.js",
   "scripts": {
