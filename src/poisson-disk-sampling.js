@@ -1,13 +1,13 @@
 "use strict";
 
-var euclideanDistanceN = require('mathp/functions/euclideanDistanceN'),
-    zeros = require('zeros'),
+var zeros = require('zeros'),
     moore = require('moore'),
+    euclideanDistanceN = require('./euclidean-distance'),
     sphereRandom = require('./sphere-random');
 
 /**
  * Get the neighbourhood ordered by distance, including the origin point
- * @param {number} dimensionNumber Number of dimensions
+ * @param {int} dimensionNumber Number of dimensions
  * @returns {Array} Neighbourhood
  */
 var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
@@ -49,8 +49,8 @@ var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
 /**
  * PoissonDiskSampling constructor
  * @param {Array} shape Shape of the space
- * @param {number} minDistance Minimum distance between each points
- * @param {number} [maxDistance] Maximum distance between each points, defaults to minDistance * 2
+ * @param {float} minDistance Minimum distance between each points
+ * @param {float} [maxDistance] Maximum distance between each points, defaults to minDistance * 2
  * @param {int} [maxTries] Number of times the algorithm has to try to place a point in the neighbourhood of another points, defaults to 30
  * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
@@ -65,8 +65,6 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
     this.rng = rng || Math.random;
-
-    this.distanceFunction = euclideanDistanceN;
 
     this.neighbourhood = getNeighbourhood(this.dimension);
 
@@ -92,7 +90,6 @@ PoissonDiskSampling.prototype.deltaDistance = null;
 PoissonDiskSampling.prototype.cellSize = null;
 PoissonDiskSampling.prototype.maxTries = null;
 PoissonDiskSampling.prototype.rng = null;
-PoissonDiskSampling.prototype.distanceFunction = null;
 PoissonDiskSampling.prototype.neighbourhood = null;
 
 PoissonDiskSampling.prototype.currentPoint = null;
@@ -166,7 +163,7 @@ PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
         if (this.grid.data[internalArrayIndex] !== 0) {
             existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
 
-            if (this.distanceFunction(point, existingPoint) < this.minDistance) {
+            if (euclideanDistanceN(point, existingPoint) < this.minDistance) {
                 return true;
             }
         }
@@ -176,7 +173,7 @@ PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
 };
 
 /**
- * Try to place a new point in the grid, returns null if it wasn't possible
+ * Try to generate a new point in the grid, returns null if it wasn't possible
  * @returns {Array|null} The added point or null
  */
 PoissonDiskSampling.prototype.next = function () {
@@ -230,10 +227,10 @@ PoissonDiskSampling.prototype.next = function () {
 /**
  * Automatically fill the grid, adding a random point to start the process if needed.
  * Will block the thread, probably best to use it in a web worker or child process.
- * @returns {Array} Sample points
+ * @returns {Array[]} Sample points
  */
 PoissonDiskSampling.prototype.fill = function () {
-    if (this.processList.length === 0) {
+    if (this.samplePoints.length === 0) {
         this.addRandomPoint();
     }
 
@@ -242,5 +239,32 @@ PoissonDiskSampling.prototype.fill = function () {
     return this.samplePoints;
 };
 
+/**
+ * Get all the points in the grid.
+ * @returns {Array[]} Sample points
+ */
+PoissonDiskSampling.prototype.getAllPoints = function () {
+    return this.samplePoints;
+};
+
+/**
+ * Reinitialize the grid as well as the internal state
+ */
+PoissonDiskSampling.prototype.reset = function () {
+    var gridData = this.grid.data,
+        i = 0;
+
+    // reset the cache grid
+    for (i = 0; i < gridData.length; i++) {
+        gridData[i] = 0;
+    }
+
+    // new array for the samplePoints as it is passed by reference to the outside
+    this.samplePoints = [];
+
+    // reset the internal state
+    this.currentPoint = null;
+    this.processList.length = 0;
+};
 
 module.exports = PoissonDiskSampling;

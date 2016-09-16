@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/kchapelier/poisson-disk-sampling",
   "dependencies": {
-    "mathp": "^1.5.0",
     "moore": "0.0.2",
     "zeros": "^1.0.0"
   },
