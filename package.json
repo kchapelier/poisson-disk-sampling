@@ -30,6 +30,6 @@
     "zeros": "^1.0.0"
   },
   "devDependencies": {
-    "save-pixels": "^2.2.1"
+    "save-pixels": "^2.3.4"
   }
 }

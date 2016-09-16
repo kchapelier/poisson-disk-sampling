@@ -8,7 +8,7 @@ var euclideanDistanceN = require('mathp/functions/euclideanDistanceN'),
 /**
  * Get the neighbourhood ordered by distance, including the origin point
  * @param {number} dimensionNumber Number of dimensions
- * @returns {array} Neighbourhood
+ * @returns {Array} Neighbourhood
  */
 var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
     var neighbourhood = moore(2, dimensionNumber),
@@ -48,7 +48,7 @@ var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
 
 /**
  * PoissonDiskSampling constructor
- * @param shape Shape of the space
+ * @param {Array} shape Shape of the space
  * @param {number} minDistance Minimum distance between each points
  * @param {number} [maxDistance] Maximum distance between each points, defaults to minDistance * 2
  * @param {int} [maxTries] Number of times the algorithm has to try to place a point in the neighbourhood of another points, defaults to 30
@@ -56,10 +56,11 @@ var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
  * @constructor
  */
 var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxDistance, maxTries, rng) {
+    maxDistance = maxDistance || minDistance * 2;
+
     this.shape = shape;
     this.dimension = this.shape.length;
     this.minDistance = minDistance;
-    this.maxDistance = maxDistance || minDistance * 2;
     this.deltaDistance = maxDistance - minDistance;
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
@@ -87,7 +88,6 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
 PoissonDiskSampling.prototype.shape = null;
 PoissonDiskSampling.prototype.dimension = null;
 PoissonDiskSampling.prototype.minDistance = null;
-PoissonDiskSampling.prototype.maxDistance = null;
 PoissonDiskSampling.prototype.deltaDistance = null;
 PoissonDiskSampling.prototype.cellSize = null;
 PoissonDiskSampling.prototype.maxTries = null;
@@ -103,7 +103,7 @@ PoissonDiskSampling.prototype.grid = null;
 
 /**
  * Add a totally random point in the grid
- * @returns {array} The point added to the grid
+ * @returns {Array} The point added to the grid
  */
 PoissonDiskSampling.prototype.addRandomPoint = function () {
     var point = new Array(this.dimension);
@@ -117,8 +117,8 @@ PoissonDiskSampling.prototype.addRandomPoint = function () {
 
 /**
  * Add a given point to the grid
- * @param {array} point Point
- * @returns {array} The point added to the grid
+ * @param {Array} point Point
+ * @returns {Array} The point added to the grid
  */
 PoissonDiskSampling.prototype.addPoint = function (point) {
     this.processList.push(point);
@@ -126,8 +126,7 @@ PoissonDiskSampling.prototype.addPoint = function (point) {
 
     var internalArrayIndex = 0,
         stride = this.grid.stride,
-        dimension,
-        currentDimensionValue;
+        dimension;
 
     for (dimension = 0; dimension < this.dimension; dimension++) {
         internalArrayIndex += ((point[dimension] / this.cellSize) | 0) * stride[dimension];
@@ -140,7 +139,7 @@ PoissonDiskSampling.prototype.addPoint = function (point) {
 
 /**
  * Check whether a given point is in the neighbourhood of existing points
- * @param {array} point Point
+ * @param {Array} point Point
  * @returns {boolean} Whether the point is in the neighbourhood of another point
  * @protected
  */
@@ -178,7 +177,7 @@ PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
 
 /**
  * Try to place a new point in the grid, returns null if it wasn't possible
- * @returns {array|null} The added point or null
+ * @returns {Array|null} The added point or null
  */
 PoissonDiskSampling.prototype.next = function () {
     var tries,
@@ -231,7 +230,7 @@ PoissonDiskSampling.prototype.next = function () {
 /**
  * Automatically fill the grid, adding a random point to start the process if needed.
  * Will block the thread, probably best to use it in a web worker or child process.
- * @returns {array} Sample points
+ * @returns {Array} Sample points
  */
 PoissonDiskSampling.prototype.fill = function () {
     if (this.processList.length === 0) {
