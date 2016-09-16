@@ -1,11 +1,11 @@
 {
   "name": "poisson-disk-sampling",
   "version": "1.0.0",
-  "description": "Experimental poisson disk sampling in arbitrary dimensions",
+  "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eyeball": "node eyeball.js > test.png && open test.png"
+    "eyeball": "node eyeball.js 2 > test.png && open test.png"
   },
   "repository": {
     "type": "git",
