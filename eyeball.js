@@ -2,6 +2,9 @@
 
 var Poisson = require('./');
 var PNG = require('pngjs-nozlib').PNG;
+Noise = require('noisejs').Noise;
+
+var noise = new Noise();
 
 function outputPng (sampling, drawFunc) {
   var png = new PNG({
@@ -28,7 +31,9 @@ function outputPng (sampling, drawFunc) {
 var dimensions = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 2;
 
 if (dimensions === 3) {
-  var sampling = new Poisson([800, 400, 200], 20, 25, 20);
+  var sampling = new Poisson([800, 400, 200], 20, 25, 20, function (point) {
+    return Math.pow(0.5 + noise.perlin2(point[0] / 75, point[1] / 75) * 0.5, 2.25);
+  });
   sampling.fill();
 
   outputPng(sampling, function (sampling, pngData) {
@@ -53,11 +58,3 @@ if (dimensions === 3) {
     });
   });
 }
-
-
-
-
-
-
-
-

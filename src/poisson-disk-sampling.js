@@ -68,10 +68,11 @@ var getNeighbourhood = function getNeighbourhood (dimensionNumber) {
  * @param {float} minDistance Minimum distance between each points
  * @param {float} [maxDistance] Maximum distance between each points, defaults to minDistance * 2
  * @param {int} [maxTries] Number of times the algorithm has to try to place a point in the neighbourhood of another points, defaults to 30
+ * @param {function} distanceFunction Some function to calculate the distance, must return a number between 0 and 1, should be pure.
  * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
-var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxDistance, maxTries, rng) {
+var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxDistance, maxTries, distanceFunction, rng) {
     maxDistance = maxDistance || minDistance * 2;
 
     this.shape = shape;
@@ -82,6 +83,8 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
     this.rng = rng || Math.random;
+
+    this.distanceFunction = distanceFunction;
 
     this.neighbourhood = getNeighbourhood(this.dimension);
 
@@ -202,7 +205,7 @@ PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
         if (this.grid.data[internalArrayIndex] !== 0) {
             existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
 
-            if (squaredEuclideanDistance(point, existingPoint) < this.squaredMinDistance) {
+            if (squaredEuclideanDistance(point, existingPoint) < this.squaredMinDistance + this.deltaDistance * this.distanceFunction(existingPoint)) {
                 return true;
             }
         }
@@ -233,7 +236,7 @@ PoissonDiskSampling.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance + this.deltaDistance * this.rng();
+            distance = this.minDistance + this.deltaDistance * (this.distanceFunction(currentPoint));
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
