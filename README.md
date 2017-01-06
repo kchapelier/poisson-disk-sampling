@@ -1,5 +1,8 @@
 # poisson-disk-sampling
 
+
+[![Build Status](https://travis-ci.org/kchapelier/poisson-disk-sampling.svg)](https://travis-ci.org/kchapelier/poisson-disk-sampling) [![NPM version](https://badge.fury.io/js/poisson-disk-sampling.svg)](http://badge.fury.io/js/poisson-disk-sampling)
+
 Poisson disk sampling in arbitrary dimensions.
 
 ## Installing
@@ -91,6 +94,8 @@ Add an arbitrary point to the grid. There won't be any check on the distance con
 
 Returns the point added to the grid.
 
+If the point given is not of the correct dimension (i.e. inserting a 2D point in a 3D grid) or doesn't fit in the grid size, null will be returned.
+
 ```js
 pds.addPoint([20, 30, 40]);
 ```
@@ -116,6 +121,12 @@ Reinitialize the grid as well as the internal state.
 When doing multiple samplings in the same grid, it is preferable to reuse the same instance of PoissonDiskSampling instead of creating a new one for each sampling.
 
 ## History
+
+### 1.0.1 (2017-01-06) :
+
+- Add some checks on the points added with addPoint()
+- Implements tests
+- Add travis support
 
 ### 1.0.0 (2016-09-16) :
 

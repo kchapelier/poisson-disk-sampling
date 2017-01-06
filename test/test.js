@@ -123,6 +123,16 @@ describe('PDS', function () {
     });
 
     describe('addPoint()', function () {
+        it('should return the added point', function () {
+            var pds = new PDS([50, 30], 8, 8, 10),
+                point = pds.addPoint([10, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.be.equal(2);
+            point[0].should.be.equal(10);
+            point[1].should.be.equal(15);
+        });
+
         it('should not allow to add points of a different dimension', function () {
             var pds = new PDS([50, 30], 8, 8, 10);
 
@@ -171,6 +181,66 @@ describe('PDS', function () {
             var points = pds.getAllPoints();
 
             points.length.should.equal(2);
+        });
+    });
+
+    describe('next()', function () {
+        it('should return the point it successfully placed in the grid', function () {
+            var pds = new PDS([50, 30], 4, 8, 10);
+
+            pds.addPoint([10,10]);
+
+            var newPoint = pds.next();
+            var points = pds.getAllPoints();
+
+            newPoint.should.be.instanceof(Array);
+            newPoint.length.should.be.equal(2);
+
+            points.length.should.be.equal(2);
+
+            points[1].should.be.deep.equal(newPoint);
+        });
+
+        it('should check the distance constraints and return null if it cannot place any point', function () {
+            var pds = new PDS([2, 2], 8, 8, 20);
+
+            pds.addPoint([1,1]);
+
+            var newPoint = pds.next();
+            var points = pds.getAllPoints();
+
+            should.equal(newPoint, null);
+            points.length.should.equal(1);
+        });
+    });
+
+    describe('reset()', function () {
+        it('should clear the state of the PDS instance', function () {
+            var pds = new PDS([50, 30], 4, 8, 10);
+
+            pds.fill();
+
+            var points = pds.getAllPoints();
+
+            points.length.should.be.above(0);
+
+            pds.reset();
+
+            points = pds.getAllPoints();
+
+            points.length.should.be.equal(0);
+        });
+
+        it('should not affect previously retrieved point collection', function () {
+            var pds = new PDS([50, 30], 4, 8, 10);
+
+            pds.fill();
+
+            var points = pds.getAllPoints();
+
+            pds.reset();
+
+            points.length.should.be.above(0);
         });
     });
 });
