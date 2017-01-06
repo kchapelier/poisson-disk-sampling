@@ -109,21 +109,42 @@ PoissonDiskSampling.prototype.addRandomPoint = function () {
         point[i] = this.rng() * this.shape[i];
     }
 
-    return this.addPoint(point);
+    return this.directAddPoint(point);
 };
 
 /**
  * Add a given point to the grid
  * @param {Array} point Point
- * @returns {Array} The point added to the grid
+ * @returns {Array|null} The point added to the grid, null if the point is out of the bound or not of the correct dimension
  */
 PoissonDiskSampling.prototype.addPoint = function (point) {
-    this.processList.push(point);
-    this.samplePoints.push(point);
+    var dimension,
+        valid = true;
 
+    if (point.length === this.dimension) {
+        for (dimension = 0; dimension < this.dimension && valid; dimension++) {
+            valid = (point[dimension] >= 0 && point[dimension] <= this.shape[dimension]);
+        }
+    } else {
+        valid = false;
+    }
+
+    return valid ? this.directAddPoint(point) : null;
+};
+
+/**
+ * Add a given point to the grid, without any check
+ * @param {Array} point Point
+ * @returns {Array} The point added to the grid
+ * @protected
+ */
+PoissonDiskSampling.prototype.directAddPoint = function (point) {
     var internalArrayIndex = 0,
         stride = this.grid.stride,
         dimension;
+
+    this.processList.push(point);
+    this.samplePoints.push(point);
 
     for (dimension = 0; dimension < this.dimension; dimension++) {
         internalArrayIndex += ((point[dimension] / this.cellSize) | 0) * stride[dimension];
@@ -212,7 +233,7 @@ PoissonDiskSampling.prototype.next = function () {
             }
 
             if (inShape && !this.inNeighbourhood(newPoint)) {
-                return this.addPoint(newPoint);
+                return this.directAddPoint(newPoint);
             }
         }
 
