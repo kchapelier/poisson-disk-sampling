@@ -5,11 +5,9 @@
 
 module.exports = sampleSphere;
 
-var defaultRng = Math.random;
-
 /**
  * @param {int} d Dimensions
- * @param {Function} [rng]
+ * @param {Function} rng
  * @returns {Array}
  */
 function sampleSphere(d, rng) {
@@ -21,8 +19,6 @@ function sampleSphere(d, rng) {
         theta,
         h,
         i;
-
-    rng = rng || defaultRng;
 
     for (i = 0; i < d2; i += 2) {
         rr = -2.0 * Math.log(rng());
@@ -42,7 +38,7 @@ function sampleSphere(d, rng) {
 
     h = 1.0 / Math.sqrt(r2);
 
-    for (i=0; i<d; ++i) {
+    for (i = 0; i < d; ++i) {
         v[i] *= h;
     }
 

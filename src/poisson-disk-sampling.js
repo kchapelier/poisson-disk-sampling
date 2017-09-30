@@ -2,8 +2,24 @@
 
 var zeros = require('zeros'),
     moore = require('moore'),
-    euclideanDistanceN = require('./euclidean-distance'),
     sphereRandom = require('./sphere-random');
+
+/**
+ * Get the squared euclidean distance from two points of arbitrary, but equal, dimensions
+ * @param {Array} point1
+ * @param {Array} point2
+ * @returns {number} Squared euclidean distance
+ */
+var squaredEuclideanDistance = function squaredEuclideanDistance (point1, point2) {
+    var result = 0,
+        i = 0;
+
+    for (; i < point1.length; i++) {
+        result += Math.pow(point1[i] - point2[i], 2);
+    }
+
+    return result;
+};
 
 /**
  * Get the neighbourhood ordered by distance, including the origin point
@@ -61,6 +77,7 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
     this.shape = shape;
     this.dimension = this.shape.length;
     this.minDistance = minDistance;
+    this.squaredMinDistance = minDistance * minDistance;
     this.deltaDistance = maxDistance - minDistance;
     this.cellSize = minDistance / Math.sqrt(this.dimension);
     this.maxTries = maxTries || 30;
@@ -86,6 +103,7 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
 PoissonDiskSampling.prototype.shape = null;
 PoissonDiskSampling.prototype.dimension = null;
 PoissonDiskSampling.prototype.minDistance = null;
+PoissonDiskSampling.prototype.squaredMinDistance = null;
 PoissonDiskSampling.prototype.deltaDistance = null;
 PoissonDiskSampling.prototype.cellSize = null;
 PoissonDiskSampling.prototype.maxTries = null;
@@ -184,7 +202,7 @@ PoissonDiskSampling.prototype.inNeighbourhood = function (point) {
         if (this.grid.data[internalArrayIndex] !== 0) {
             existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
 
-            if (euclideanDistanceN(point, existingPoint) < this.minDistance) {
+            if (squaredEuclideanDistance(point, existingPoint) < this.squaredMinDistance) {
                 return true;
             }
         }
@@ -237,7 +255,7 @@ PoissonDiskSampling.prototype.next = function () {
             }
         }
 
-        if (tries >= this.maxTries) {
+        if (tries === this.maxTries) {
             this.currentPoint = null;
         }
     }
