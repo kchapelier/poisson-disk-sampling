@@ -1,12 +1,17 @@
 {
   "name": "poisson-disk-sampling",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Poisson disk sampling in arbitrary dimensions",
-  "main": "index.js",
+  "main": "src/poisson-disk-sampling.js",
   "scripts": {
     "test": "mocha test/",
-    "eyeball": "node eyeball.js 2 > test.png && open test.png"
+    "eyeball": "node eyeball.js 2 > test.png && open test.png",
+    "benchmark": "node benchmark.js"
   },
+  "files": [
+    "src/poisson-disk-sampling.js",
+    "src/sphere-random.js"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/kchapelier/poisson-disk-sampling.git"
@@ -25,8 +30,8 @@
   },
   "homepage": "https://github.com/kchapelier/poisson-disk-sampling",
   "dependencies": {
-    "moore": "0.0.2",
-    "zeros": "^1.0.0"
+    "moore": "~1.0.0",
+    "zeros": "~1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

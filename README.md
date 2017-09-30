@@ -1,6 +1,5 @@
 # poisson-disk-sampling
 
-
 [![Build Status](https://travis-ci.org/kchapelier/poisson-disk-sampling.svg)](https://travis-ci.org/kchapelier/poisson-disk-sampling) [![NPM version](https://badge.fury.io/js/poisson-disk-sampling.svg)](http://badge.fury.io/js/poisson-disk-sampling)
 
 Poisson disk sampling in arbitrary dimensions.
@@ -121,6 +120,13 @@ Reinitialize the grid as well as the internal state.
 When doing multiple samplings in the same grid, it is preferable to reuse the same instance of PoissonDiskSampling instead of creating a new one for each sampling.
 
 ## History
+
+### 1.0.2 (2017-09-30) :
+
+- Minor performance tweaks
+- Reduce npm package size
+- Update `moore` dep
+- Add benchmark script
 
 ### 1.0.1 (2017-01-06) :
 
