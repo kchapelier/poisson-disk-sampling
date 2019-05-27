@@ -4,6 +4,8 @@ var Poisson = require('./'),
     save = require('save-pixels'),
     zeros = require('zeros');
 
+// TODO rewrite to not use zeros
+
 var dimensions = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 2;
 
 if (dimensions === 3) {

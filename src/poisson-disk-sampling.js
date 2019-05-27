@@ -1,6 +1,6 @@
 "use strict";
 
-var zeros = require('zeros'),
+var tinyNDArray = require('./tiny-ndarray'),
     moore = require('moore'),
     sphereRandom = require('./sphere-random');
 
@@ -97,7 +97,7 @@ var PoissonDiskSampling = function PoissonDiskSampling (shape, minDistance, maxD
         this.gridShape.push(Math.ceil(shape[i] / this.cellSize));
     }
 
-    this.grid = zeros(this.gridShape, 'uint32'); //will store references to samplePoints
+    this.grid = tinyNDArray(this.gridShape); //will store references to samplePoints
 };
 
 PoissonDiskSampling.prototype.shape = null;
