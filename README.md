@@ -121,6 +121,10 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 ## History
 
+### 1.0.5 (2019-05-27) :
+
+- Fix package on npm (adding missing file)
+
 ### 1.0.4 (2019-05-27) :
 
 - Replace ndarray with a leaner custom implementation to drastically reduce the size of the package (~50%)

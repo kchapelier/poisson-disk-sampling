@@ -1,6 +1,6 @@
 {
   "name": "poisson-disk-sampling",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "src/poisson-disk-sampling.js",
   "scripts": {
@@ -10,7 +10,8 @@
   },
   "files": [
     "src/poisson-disk-sampling.js",
-    "src/sphere-random.js"
+    "src/sphere-random.js",
+    "src/tiny-ndarray.js"
   ],
   "repository": {
     "type": "git",
