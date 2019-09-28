@@ -1,6 +1,6 @@
 {
   "name": "poisson-disk-sampling",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "src/poisson-disk-sampling.js",
   "scripts": {
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "chai": "~4.2.0",
-    "mocha": "~6.1.4",
+    "mocha": "~6.2.0",
     "pngjs-nozlib": "~1.0.0"
   }
 }

@@ -121,6 +121,10 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 ## History
 
+### 1.0.6 (2019-09-28) :
+
+- Update dev dependencies
+
 ### 1.0.5 (2019-05-27) :
 
 - Fix package on npm (adding missing file)
