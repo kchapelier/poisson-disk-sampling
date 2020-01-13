@@ -4,6 +4,7 @@
   "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "src/poisson-disk-sampling.js",
   "scripts": {
+    "build": "webpack",
     "test": "mocha test/",
     "eyeball": "node eyeball.js 2 > test.png && open test.png",
     "benchmark": "node benchmark.js"
@@ -34,8 +35,14 @@
     "moore": "~1.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "babel-loader": "^8.0.6",
     "chai": "~4.2.0",
     "mocha": "~6.2.0",
-    "pngjs-nozlib": "~1.0.0"
+    "pngjs-nozlib": "~1.0.0",
+    "terser-webpack-plugin": "^2.3.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }
