@@ -20,6 +20,8 @@ module.exports = (env, options) => ({
   },
   output: {
     filename: '[name].js',
+    library: "Poisson",
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, './build')
   },
   module: {
