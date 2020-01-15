@@ -4,6 +4,8 @@
   "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "src/poisson-disk-sampling.js",
   "scripts": {
+    "build": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling > build/poisson-disk-sampling.js",
+    "build-min": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling | terser > build/poisson-disk-sampling.min.js",
     "test": "mocha test/",
     "eyeball": "node eyeball.js 2 > test.png && open test.png",
     "benchmark": "node benchmark.js"
@@ -34,8 +36,10 @@
     "moore": "~1.0.0"
   },
   "devDependencies": {
+    "browserify": "^16.5.0",
     "chai": "~4.2.0",
     "mocha": "~6.2.0",
-    "pngjs-nozlib": "~1.0.0"
+    "pngjs-nozlib": "~1.0.0",
+    "terser": "^4.6.3"
   }
 }
