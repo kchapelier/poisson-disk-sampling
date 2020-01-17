@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on CDNs:
 
 ```html
-<script src="https://raw.githubusercontent.com/kchapelier/poisson-disk-sampling/1.0.6/build/poisson-disk-sampling.min.js"></script>
+<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/1.0.6/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ```html
