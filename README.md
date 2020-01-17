@@ -18,11 +18,15 @@ With [yarn](https://yarnpkg.com/) do:
 yarn add poisson-disk-sampling
 ```
 
-A compiled version of library is also available on CDNs
+A compiled version for web browsers is also available on CDNs:
 
-```<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/browser-build/build/poisson-disk-sampling.min.js"></script>```
+```html
+<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/browser-build/build/poisson-disk-sampling.min.js"></script>
+```
 
-```<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@1.0.6/"></script>```
+```html
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@1.0.6/"></script>
+```
 
 ## Features
 
@@ -183,9 +187,7 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 ## How to contribute ?
 
-Fixes are most welcome. For new features and other enhancements, please make sure to contact me beforehand, either on [Twitter](https://twitter.com/kchplr) or through an issue on Github.
-
-TypeScript type definitions should be submitted to [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped).
+For new features and other enhancements, please make sure to contact me beforehand, either on [Twitter](https://twitter.com/kchplr) or through an issue on Github.
 
 ## License
 
