@@ -5,7 +5,7 @@
   "main": "src/poisson-disk-sampling.js",
   "scripts": {
     "build": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling > build/poisson-disk-sampling.js",
-    "build-min": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling | terser > build/poisson-disk-sampling.min.js",
+    "build-min": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling | terser --ecma 5 > build/poisson-disk-sampling.min.js",
     "test": "mocha test/",
     "eyeball": "node eyeball.js 2 > test.png && open test.png",
     "benchmark": "node benchmark.js"

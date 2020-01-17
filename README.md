@@ -6,11 +6,23 @@ Poisson disk sampling in arbitrary dimensions.
 
 ## Installing
 
-With [npm](http://npmjs.org) do:
+With [npm](https://www.npmjs.com/) do:
 
 ```
 npm install poisson-disk-sampling
 ```
+
+With [yarn](https://yarnpkg.com/) do:
+
+```
+yarn add poisson-disk-sampling
+```
+
+A compiled version of library is also available on CDNs
+
+```<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/browser-build/build/poisson-disk-sampling.min.js"></script>```
+
+```<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@1.0.6/"></script>```
 
 ## Features
 
@@ -21,7 +33,7 @@ npm install poisson-disk-sampling
 ## Basic example
 
 ```js
-var p = new Poisson([600, 300, 200], 20, 30, 10);
+var p = new PoissonDiskSampling([600, 300, 200], 20, 30, 10);
 var points = p.fill();
 
 console.log(points); //array of sample points, themselves represented as simple arrays
@@ -168,6 +180,12 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 ## Roadmap
 
 - Tests.
+
+## How to contribute ?
+
+Fixes are most welcome. For new features and other enhancements, please make sure to contact me beforehand, either on [Twitter](https://twitter.com/kchplr) or through an issue on Github.
+
+TypeScript type definitions should be submitted to [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped).
 
 ## License
 
