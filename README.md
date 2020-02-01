@@ -21,11 +21,11 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on CDNs:
 
 ```html
-<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/1.0.6/build/poisson-disk-sampling.min.js"></script>
+<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/2.0.0/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@1.0.6/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.0.0/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -37,7 +37,12 @@ A compiled version for web browsers is also available on CDNs:
 ## Basic example
 
 ```js
-var p = new PoissonDiskSampling([600, 300, 200], 20, 30, 10);
+var p = new PoissonDiskSampling({
+    shape: [600, 300, 200],
+    minDistance: 20,
+    maxDistance: 30,
+    tries: 10
+});
 var points = p.fill();
 
 console.log(points); //array of sample points, themselves represented as simple arrays
@@ -51,22 +56,33 @@ console.log(points); //array of sample points, themselves represented as simple 
 
 ### Constructor
 
-**new PoissonDiskSampling(shape, minDistance[, maxDistance[, maxTries[, rng]]])**
+**new PoissonDiskSampling(options[, rng])**
 
-- *shape :* Size/dimensions of the grid to generate points in.
-- *minDistance :* Minimum distance between each points.
-- *maxDistance :* Maximum distance between each points, default to minDistance times 2.
-- *maxTries :* Maximum number of tries to generate a point, defaults to 30.
+- *options :* Size/dimensions of the grid to generate points in.
+  - *shape :* Size/dimensions of the grid to generate points in, required.
+  - *minDistance :* Minimum distance between each points, required.
+  - *maxDistance :* Maximum distance between each points, defaults to minDistance times 2.
+  - *tries :* Maximum number of tries to generate a point, defaults to 30.
 - *rng :* A function to use as random number generator, defaults to Math.random.
 
 ```js
 // Poisson disk sampling in a 2D square
-var pds = new PoissonDiskSampling([50, 50], 4, 4, 10);
+var pds = new PoissonDiskSampling({
+    shape: [50, 50],
+    minDistance: 4,
+    maxDistance: 4,
+    tries: 10
+});
 ```
 
 ```js
 // Poisson disk sampling in a 3D volume
-var pds = new PoissonDiskSampling([900, 400, 400], 20, 25, 10);
+var pds = new PoissonDiskSampling({
+    shape: [900, 400, 400],
+    minDistance: 20,
+    maxDistance: 25,
+    tries: 10
+});
 ```
 
 ### Method
@@ -136,6 +152,10 @@ Reinitialize the grid as well as the internal state.
 When doing multiple samplings in the same grid, it is preferable to reuse the same instance of PoissonDiskSampling instead of creating a new one for each sampling.
 
 ## History
+
+### 2.0.0 (XXXX-XX-XX) :
+
+- Change constructor signature
 
 ### 1.0.6 (2019-09-28) :
 

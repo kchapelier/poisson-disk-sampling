@@ -28,28 +28,38 @@ function outputPng (sampling, drawFunc) {
 var dimensions = process.argv.length > 2 ? parseInt(process.argv[2], 10) : 2;
 
 if (dimensions === 3) {
-  var sampling = new Poisson([800, 400, 200], 20, 25, 20);
+  var sampling = new Poisson({
+      shape: [800, 400, 200],
+      minDistance: 20,
+      maxDistance: 25,
+      tries: 20
+  });
   sampling.fill();
 
   outputPng(sampling, function (sampling, pngData) {
-    sampling.samplePoints.forEach(function (point) {
-      var idx = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
-      var gray = 255 - 255 * Math.pow((1 + point[2]) / sampling.shape[2], 1.5) | 0;
-      pngData[idx] = pngData[idx + 1] = pngData[idx + 2] = gray;
+    sampling.getAllPoints().forEach(function (point) {
+      var pixelIndex = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
+      var intensity = 255 - 255 * Math.pow((1 + point[2]) / sampling.shape[2], 1.5) | 0;
+      pngData[pixelIndex] = pngData[pixelIndex + 1] = pngData[pixelIndex + 2] = intensity;
     });
   });
 } else {
-  var sampling = new Poisson([600, 600], 8, 8, 20);
+  var sampling = new Poisson({
+      shape: [600, 600],
+      minDistance: 8,
+      maxDistance: 8,
+      tries: 20
+  });
   sampling.fill();
 
   outputPng(sampling, function (sampling, pngData) {
     var i = 0;
 
-    sampling.samplePoints.forEach(function (point) {
+    sampling.getAllPoints().forEach(function (point) {
       i++;
-      var idx = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
-      var gray = 50 + (Math.cos(i / 50) + 1) * 205 / 2 | 0;
-      pngData[idx] = pngData[idx + 1] = pngData[idx + 2] = gray;
+      var pixelIndex = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
+      var intensity = 50 + (Math.cos(i / 50) + 1) / 2 * 205 | 0;
+      pngData[pixelIndex] = pngData[pixelIndex + 1] = pngData[pixelIndex + 2] = intensity;
     });
   });
 }

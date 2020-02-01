@@ -16,7 +16,7 @@ function makeDimensionArray(dimensions, value) {
 describe('PDS', function () {
     describe('fill()', function () {
         it('should return an array of points', function () {
-            var pds = new PDS([50, 30], 4, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
                 points = pds.fill();
 
             points.should.be.instanceof(Array);
@@ -25,7 +25,7 @@ describe('PDS', function () {
         });
 
         it('should only generate points within the provided grid size', function () {
-            var pds = new PDS([50, 30], 4, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
                 points = pds.fill();
 
             for (var i = 0; i < points.length; i++) {
@@ -37,7 +37,7 @@ describe('PDS', function () {
 
     describe('getAllPoints()', function () {
         it('should return an empty array after the instantiation', function () {
-            var pds = new PDS([50, 30], 4, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
                 points = pds.getAllPoints();
 
             points.should.be.instanceof(Array);
@@ -45,7 +45,7 @@ describe('PDS', function () {
         });
 
         it('should return an array of points after fill', function () {
-            var pds = new PDS([50, 30], 4, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });
 
             pds.fill();
 
@@ -59,7 +59,7 @@ describe('PDS', function () {
 
     describe('addRandomPoint()', function () {
         it('should return a point within the provided grid size', function () {
-            var pds = new PDS([50, 30], 4, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
                 point = pds.addRandomPoint();
 
             point.should.be.instanceof(Array);
@@ -68,7 +68,7 @@ describe('PDS', function () {
         });
 
         it('should create a new point for each call', function () {
-            var pds = new PDS([50, 30], 4, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
                 point1 = pds.addRandomPoint(),
                 point2 = pds.addRandomPoint();
 
@@ -76,7 +76,7 @@ describe('PDS', function () {
         });
 
         it('should ignore the distance constraints', function () {
-            var pds = new PDS([2, 2], 8, 8, 10);
+            var pds = new PDS({ shape: [2, 2], minDistance: 8, maxDistance: 8, tries: 10 });
 
             // there is not enough room in this grid for two points satisfying the distance constraints
             // however addRandomPoint doesn't check those constraints, therefore two points should be generated
@@ -96,7 +96,7 @@ describe('PDS', function () {
                 return 0.5;
             };
 
-            var pds = new PDS([50, 30], 4, 8, 10, riggedRng),
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }, riggedRng),
                 point1 = pds.addRandomPoint(),
                 point2 = pds.addRandomPoint();
 
@@ -113,7 +113,7 @@ describe('PDS', function () {
             // test dimensions 1 to 5
 
             for (var i = 1; i <= 5; i++) {
-                pds = new PDS(makeDimensionArray(i, 10), 8, 8, 10);
+                pds = new PDS({ shape: makeDimensionArray(i, 10), minDistance: 8, maxDistance: 8, tries: 10 });
 
                 point = pds.addRandomPoint();
 
@@ -124,7 +124,7 @@ describe('PDS', function () {
 
     describe('addPoint()', function () {
         it('should return the added point', function () {
-            var pds = new PDS([50, 30], 8, 8, 10),
+            var pds = new PDS({ shape: [50, 30], minDistance: 8, maxDistance: 8, tries: 10 }),
                 point = pds.addPoint([10, 15]);
 
             point.should.be.instanceof(Array);
@@ -134,7 +134,7 @@ describe('PDS', function () {
         });
 
         it('should not allow to add points of a different dimension', function () {
-            var pds = new PDS([50, 30], 8, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 8, maxDistance: 8, tries: 10 });
 
             // those 1D and 3D points should not be accepted in this 2D grid
 
@@ -150,7 +150,7 @@ describe('PDS', function () {
         });
 
         it('should not allow to add points outside of the provided grid size', function () {
-            var pds = new PDS([50, 30], 8, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 8, maxDistance: 8, tries: 10 });
 
             // none of those points are within the bounds, they should be ignored
 
@@ -170,7 +170,7 @@ describe('PDS', function () {
         });
 
         it('should ignore the distance constraints', function () {
-            var pds = new PDS([2, 2], 8, 8, 10);
+            var pds = new PDS({ shape: [2, 2], minDistance: 8, maxDistance: 8, tries: 10 });
 
             // there is not enough room in this grid for two points satisfying the distance constraints
             // however addPoint doesn't check those constraints, therefore two points should be generated
@@ -186,7 +186,7 @@ describe('PDS', function () {
 
     describe('next()', function () {
         it('should return the point it successfully placed in the grid', function () {
-            var pds = new PDS([50, 30], 4, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });
 
             pds.addPoint([10,10]);
 
@@ -202,7 +202,7 @@ describe('PDS', function () {
         });
 
         it('should check the distance constraints and return null if it cannot place any point', function () {
-            var pds = new PDS([2, 2], 8, 8, 20);
+            var pds = new PDS({ shape: [2, 2], minDistance: 8, maxDistance: 8, tries: 20 });
 
             pds.addPoint([1,1]);
 
@@ -216,7 +216,7 @@ describe('PDS', function () {
 
     describe('reset()', function () {
         it('should clear the state of the PDS instance', function () {
-            var pds = new PDS([50, 30], 4, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });
 
             pds.fill();
 
@@ -232,7 +232,7 @@ describe('PDS', function () {
         });
 
         it('should not affect previously retrieved point collection', function () {
-            var pds = new PDS([50, 30], 4, 8, 10);
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });
 
             pds.fill();
 
