@@ -18,11 +18,7 @@ With [yarn](https://yarnpkg.com/) do:
 yarn add poisson-disk-sampling
 ```
 
-A compiled version for web browsers is also available on CDNs:
-
-```html
-<script src="https://gitcdn.xyz/repo/kchapelier/poisson-disk-sampling/2.0.0/build/poisson-disk-sampling.min.js"></script>
-```
+A compiled version for web browsers is also available on a CDN:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.0.0/build/poisson-disk-sampling.min.js"></script>
