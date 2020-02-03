@@ -33,6 +33,7 @@ A compiled version for web browsers is also available on CDNs:
 - Can be used in any dimension (1D, 2D, 3D and more).
 - Can be used with a custom RNG function.
 - Allow the configuration of the max number of tries, the minimum distance and the maximum distance between each points.
+- Allow the use of custom function to drive the density of the distribution
 
 ## Basic example
 
@@ -51,6 +52,27 @@ console.log(points); //array of sample points, themselves represented as simple 
 ### Result as an image
 
 <img src="https://github.com/kchapelier/poisson-disk-sampling/raw/master/img/example1.png" style="image-rendering:pixelated; width:500px;"></img>
+
+## Example with an image driving the distribution density
+
+```js
+var p = new PoissonDiskSampling({
+    shape: [500, 500],
+    minDistance: 1,
+    maxDistance: 30,
+    tries: 20,
+    distanceFunction: function (p) {
+        return getPixelValueSomehow(p[0], p[1]); // value between 0 and 1
+    }
+});
+var points = p.fill();
+
+console.log(points); //array of sample points, themselves represented as simple arrays
+```
+
+### Result as an image
+
+<img src="https://github.com/kchapelier/poisson-disk-sampling/raw/master/img/example2.png" style="image-rendering:pixelated; width:500px;"></img>
 
 ## Public API
 
@@ -174,12 +196,12 @@ Internally, there are two different implementations of the algorithm. The implem
 
 ## History
 
-### 2.0.0 (2020-02-03) :
+### [2.0.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.0.0) (2020-02-03) :
 
 - Support distance function / variable density
 - Change constructor signature, the rest of the public API is unchanged
 
-### 1.0.6 (2019-09-28) :
+### [1.0.6](https://github.com/kchapelier/poisson-disk-sampling/tree/1.0.6) (2019-09-28) :
 
 - Update dev dependencies
 
