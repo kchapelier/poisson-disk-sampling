@@ -1,6 +1,7 @@
 "use strict";
 
 var FixedDistancePDS = require('./implementations/fixed-distance');
+var VariableDistancePDS = require('./implementations/variable-distance');
 
 /**
  * PoissonDiskSampling constructor
@@ -16,9 +17,17 @@ function PoissonDiskSampling (options, rng) {
     rng = rng || Math.random;
 
     options.maxDistance = options.maxDistance || options.minDistance * 2;
-    options.tries = options.tries || 30;
+    options.tries = Math.ceil(Math.max(1, options.tries || 30));
 
-    this.implementation = new FixedDistancePDS(options, rng);
+    this.shape = options.shape;
+
+    if (typeof options.distanceFunction === 'function') {
+        options.bias = Math.min(1, Math.max(0, typeof options.bias === 'number' ? options.bias : 0.5));
+
+        this.implementation = new VariableDistancePDS(options, rng);
+    } else {
+        this.implementation = new FixedDistancePDS(options, rng);
+    }
 }
 
 PoissonDiskSampling.prototype.implementation = null;
