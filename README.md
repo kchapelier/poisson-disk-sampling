@@ -244,7 +244,7 @@ Internally, there are two different implementations of the algorithm. The implem
 ## Roadmap
 
 - Make a test suite for the variable density implementation.
-- Investigate possible performance tweaks spooted while working on the variable density implementation.
+- Investigate possible performance tweaks spotted while working on the variable density implementation.
 
 ## How to contribute ?
 
