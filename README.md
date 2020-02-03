@@ -63,6 +63,8 @@ console.log(points); //array of sample points, themselves represented as simple 
   - *minDistance :* Minimum distance between each points, required.
   - *maxDistance :* Maximum distance between each points, defaults to minDistance times 2.
   - *tries :* Maximum number of tries to generate a point, defaults to 30.
+  - *distanceFunction :* Function to control the distance between each point depending on their position, must return a value between 0 and 1.
+  - *bias :* When using a distanceFunction, will indicate which point constraint takes priority (0 for the lowest distance, 1 for the highest distance), defaults to 0.
 - *rng :* A function to use as random number generator, defaults to Math.random.
 
 ```js
@@ -82,6 +84,21 @@ var pds = new PoissonDiskSampling({
     minDistance: 20,
     maxDistance: 25,
     tries: 10
+});
+```
+
+```js
+// Poisson disk sampling in a 2D square using
+// a custom function to drive the distance between each point
+var pds = new PoissonDiskSampling({
+    shape: [400, 400],
+    minDistance: 4,
+    maxDistance: 20,
+    tries: 20,
+    distanceFunction: function (point) {
+        return point[0] / 400;
+    },
+    bias: 0
 });
 ```
 
@@ -151,11 +168,16 @@ Reinitialize the grid as well as the internal state.
 
 When doing multiple samplings in the same grid, it is preferable to reuse the same instance of PoissonDiskSampling instead of creating a new one for each sampling.
 
+## Implementation notes
+
+Internally, there are two different implementations of the algorithm. The implementation is chosen depending on whether a distanceFunction is passed to the constructor. The library is designed in such a way as to keep it transparent to the end user.
+
 ## History
 
-### 2.0.0 (XXXX-XX-XX) :
+### 2.0.0 (2020-02-03) :
 
-- Change constructor signature
+- Support distance function / variable density
+- Change constructor signature, the rest of the public API is unchanged
 
 ### 1.0.6 (2019-09-28) :
 
@@ -203,7 +225,8 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 ## Roadmap
 
-- Tests.
+- Make a test suite for the variable density implementation.
+- Investigate possible performance tweaks spooted while working on the variable density implementation.
 
 ## How to contribute ?
 

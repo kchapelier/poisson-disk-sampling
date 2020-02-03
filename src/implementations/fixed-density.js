@@ -1,16 +1,16 @@
 "use strict";
 
-var tinyNDArray = require('./../tiny-ndarray').array,
+var tinyNDArray = require('./../tiny-ndarray').integer,
     moore = require('moore'),
     sphereRandom = require('./../sphere-random');
 
 /**
- * Get the euclidean distance from two points of arbitrary, but equal, dimensions
+ * Get the squared euclidean distance from two points of arbitrary, but equal, dimensions
  * @param {Array} point1
  * @param {Array} point2
- * @returns {number} Euclidean distance
+ * @returns {number} Squared euclidean distance
  */
-function euclideanDistance (point1, point2) {
+function squaredEuclideanDistance (point1, point2) {
     var result = 0,
         i = 0;
 
@@ -18,7 +18,7 @@ function euclideanDistance (point1, point2) {
         result += Math.pow(point1[i] - point2[i], 2);
     }
 
-    return Math.sqrt(result);
+    return result;
 }
 
 /**
@@ -61,40 +61,33 @@ function getNeighbourhood (dimensionNumber) {
     return neighbourhood;
 }
 
-
 /**
- * VariableDistancePDS constructor
+ * FixedDensityPDS constructor
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
  * @param {float} options.maxDistance Maximum distance between each points, defaults to minDistance * 2
  * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
- * @param {function} options.distanceFunction Function
- * @param {float} options.bias Bias
  * @param {function} rng RNG function, defaults to Math.random
  * @constructor
  */
-function VariableDistancePDS (options, rng) {
+function FixedDensityPDS (options, rng) {
     this.shape = options.shape;
     this.minDistance = options.minDistance;
     this.maxDistance = options.maxDistance;
     this.maxTries = options.tries;
-    this.distanceFunction = options.distanceFunction;
-    this.bias = options.bias;
-
     this.rng = rng;
 
     this.dimension = this.shape.length;
+    this.squaredMinDistance = this.minDistance * this.minDistance;
     this.deltaDistance = this.maxDistance - this.minDistance;
-    this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
+    this.cellSize = this.minDistance / Math.sqrt(this.dimension);
 
     this.neighbourhood = getNeighbourhood(this.dimension);
 
     this.currentPoint = null;
-    this.currentDistance = 0;
     this.processList = [];
     this.samplePoints = [];
-    this.sampleDistance = []; // used to store the distance for a given point
 
     // cache grid
 
@@ -104,30 +97,30 @@ function VariableDistancePDS (options, rng) {
         this.gridShape.push(Math.ceil(this.shape[i] / this.cellSize));
     }
 
-    this.grid = tinyNDArray(this.gridShape); //will store references to samplePoints and sampleDistance
+    this.grid = tinyNDArray(this.gridShape); //will store references to samplePoints
 }
 
-VariableDistancePDS.prototype.shape = null;
-VariableDistancePDS.prototype.dimension = null;
-VariableDistancePDS.prototype.minDistance = null;
-VariableDistancePDS.prototype.deltaDistance = null;
-VariableDistancePDS.prototype.cellSize = null;
-VariableDistancePDS.prototype.maxTries = null;
-VariableDistancePDS.prototype.rng = null;
-VariableDistancePDS.prototype.neighbourhood = null;
+FixedDensityPDS.prototype.shape = null;
+FixedDensityPDS.prototype.dimension = null;
+FixedDensityPDS.prototype.minDistance = null;
+FixedDensityPDS.prototype.squaredMinDistance = null;
+FixedDensityPDS.prototype.deltaDistance = null;
+FixedDensityPDS.prototype.cellSize = null;
+FixedDensityPDS.prototype.maxTries = null;
+FixedDensityPDS.prototype.rng = null;
+FixedDensityPDS.prototype.neighbourhood = null;
 
-VariableDistancePDS.prototype.currentPoint = null;
-VariableDistancePDS.prototype.currentDistance = null;
-VariableDistancePDS.prototype.processList = null;
-VariableDistancePDS.prototype.samplePoints = null;
-VariableDistancePDS.prototype.gridShape = null;
-VariableDistancePDS.prototype.grid = null;
+FixedDensityPDS.prototype.currentPoint = null;
+FixedDensityPDS.prototype.processList = null;
+FixedDensityPDS.prototype.samplePoints = null;
+FixedDensityPDS.prototype.gridShape = null;
+FixedDensityPDS.prototype.grid = null;
 
 /**
  * Add a totally random point in the grid
  * @returns {Array} The point added to the grid
  */
-VariableDistancePDS.prototype.addRandomPoint = function () {
+FixedDensityPDS.prototype.addRandomPoint = function () {
     var point = new Array(this.dimension);
 
     for (var i = 0; i < this.dimension; i++) {
@@ -142,7 +135,7 @@ VariableDistancePDS.prototype.addRandomPoint = function () {
  * @param {Array} point Point
  * @returns {Array|null} The point added to the grid, null if the point is out of the bound or not of the correct dimension
  */
-VariableDistancePDS.prototype.addPoint = function (point) {
+FixedDensityPDS.prototype.addPoint = function (point) {
     var dimension,
         valid = true;
 
@@ -163,21 +156,19 @@ VariableDistancePDS.prototype.addPoint = function (point) {
  * @returns {Array} The point added to the grid
  * @protected
  */
-VariableDistancePDS.prototype.directAddPoint = function (point) {
+FixedDensityPDS.prototype.directAddPoint = function (point) {
     var internalArrayIndex = 0,
         stride = this.grid.stride,
-        pointIndex = this.samplePoints.length,
         dimension;
 
-    this.processList.push(pointIndex);
+    this.processList.push(point);
     this.samplePoints.push(point);
-    this.sampleDistance.push(this.distanceFunction(point));
 
     for (dimension = 0; dimension < this.dimension; dimension++) {
         internalArrayIndex += ((point[dimension] / this.cellSize) | 0) * stride[dimension];
     }
 
-    this.grid.data[internalArrayIndex].push(pointIndex); // store the point reference
+    this.grid.data[internalArrayIndex] = this.samplePoints.length; // store the point reference
 
     return point;
 };
@@ -188,16 +179,14 @@ VariableDistancePDS.prototype.directAddPoint = function (point) {
  * @returns {boolean} Whether the point is in the neighbourhood of another point
  * @protected
  */
-VariableDistancePDS.prototype.inNeighbourhood = function (point) {
+FixedDensityPDS.prototype.inNeighbourhood = function (point) {
     var dimensionNumber = this.dimension,
         stride = this.grid.stride,
-        bias = this.bias,
         neighbourIndex,
         internalArrayIndex,
         dimension,
         currentDimensionValue,
-        existingPoint,
-        existingPointDistance;
+        existingPoint;
 
     for (neighbourIndex = 0; neighbourIndex < this.neighbourhood.length; neighbourIndex++) {
         internalArrayIndex = 0;
@@ -210,14 +199,11 @@ VariableDistancePDS.prototype.inNeighbourhood = function (point) {
             }
         }
 
-        if (this.grid.data[internalArrayIndex].length > 0) {
-            for (var i = 0; i < this.grid.data[internalArrayIndex].length; i++) {
-                existingPoint = this.samplePoints[this.grid.data[internalArrayIndex][i]];
-                existingPointDistance = this.sampleDistance[this.grid.data[internalArrayIndex][i]];
+        if (this.grid.data[internalArrayIndex] !== 0) {
+            existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
 
-                if (euclideanDistance(point, existingPoint) < this.minDistance + this.deltaDistance * existingPointDistance) { // apply bias and use 'point' distance
-                    return true;
-                }
+            if (squaredEuclideanDistance(point, existingPoint) < this.squaredMinDistance) {
+                return true;
             }
         }
     }
@@ -229,29 +215,25 @@ VariableDistancePDS.prototype.inNeighbourhood = function (point) {
  * Try to generate a new point in the grid, returns null if it wasn't possible
  * @returns {Array|null} The added point or null
  */
-VariableDistancePDS.prototype.next = function () {
+FixedDensityPDS.prototype.next = function () {
     var tries,
         angle,
         distance,
         currentPoint,
-        currentDistance,
         newPoint,
         inShape,
         i;
 
     while (this.processList.length > 0) {
         if (this.currentPoint === null) {
-            var sampleIndex = this.processList.shift();
-            this.currentPoint = this.samplePoints[sampleIndex];
-            this.currentDistance = this.sampleDistance[sampleIndex];
+            this.currentPoint = this.processList.shift();
         }
 
         currentPoint = this.currentPoint;
-        currentDistance = this.currentDistance;
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance + this.deltaDistance * currentDistance;
+            distance = this.minDistance + this.deltaDistance * this.rng();
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
@@ -286,7 +268,7 @@ VariableDistancePDS.prototype.next = function () {
  * Will block the thread, probably best to use it in a web worker or child process.
  * @returns {Array[]} Sample points
  */
-VariableDistancePDS.prototype.fill = function () {
+FixedDensityPDS.prototype.fill = function () {
     if (this.samplePoints.length === 0) {
         this.addRandomPoint();
     }
@@ -300,20 +282,20 @@ VariableDistancePDS.prototype.fill = function () {
  * Get all the points in the grid.
  * @returns {Array[]} Sample points
  */
-VariableDistancePDS.prototype.getAllPoints = function () {
+FixedDensityPDS.prototype.getAllPoints = function () {
     return this.samplePoints;
 };
 
 /**
  * Reinitialize the grid as well as the internal state
  */
-VariableDistancePDS.prototype.reset = function () {
+FixedDensityPDS.prototype.reset = function () {
     var gridData = this.grid.data,
         i = 0;
 
     // reset the cache grid
     for (i = 0; i < gridData.length; i++) {
-        gridData[i] = [];
+        gridData[i] = 0;
     }
 
     // new array for the samplePoints as it is passed by reference to the outside
@@ -324,4 +306,4 @@ VariableDistancePDS.prototype.reset = function () {
     this.processList.length = 0;
 };
 
-module.exports = VariableDistancePDS;
+module.exports = FixedDensityPDS;
