@@ -33,7 +33,7 @@ A compiled version for web browsers is also available on CDNs:
 - Can be used in any dimension (1D, 2D, 3D and more).
 - Can be used with a custom RNG function.
 - Allow the configuration of the max number of tries, the minimum distance and the maximum distance between each points.
-- Allow the use of custom function to drive the density of the distribution
+- Allow the use of custom function to drive the density of the distribution.
 
 ## Basic example
 
@@ -46,7 +46,7 @@ var p = new PoissonDiskSampling({
 });
 var points = p.fill();
 
-console.log(points); //array of sample points, themselves represented as simple arrays
+console.log(points); // array of sample points, themselves represented as simple arrays
 ```
 
 ### Result as an image
@@ -62,12 +62,12 @@ var p = new PoissonDiskSampling({
     maxDistance: 30,
     tries: 20,
     distanceFunction: function (p) {
-        return getPixelValueSomehow(p[0], p[1]); // value between 0 and 1
+        return getImagePixelValueSomehow(p[0], p[1]); // value between 0 and 1
     }
 });
 var points = p.fill();
 
-console.log(points); //array of sample points, themselves represented as simple arrays
+console.log(points); // array of sample points, themselves represented as simple arrays
 ```
 
 ### Result as an image
@@ -80,13 +80,13 @@ console.log(points); //array of sample points, themselves represented as simple 
 
 **new PoissonDiskSampling(options[, rng])**
 
-- *options :* Size/dimensions of the grid to generate points in.
+- *options :*
   - *shape :* Size/dimensions of the grid to generate points in, required.
   - *minDistance :* Minimum distance between each points, required.
   - *maxDistance :* Maximum distance between each points, defaults to minDistance times 2.
   - *tries :* Maximum number of tries to generate a point, defaults to 30.
   - *distanceFunction :* Function to control the distance between each point depending on their position, must return a value between 0 and 1.
-  - *bias :* When using a distanceFunction, will indicate which point constraint takes priority (0 for the lowest distance, 1 for the highest distance), defaults to 0.
+  - *bias :* When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance), defaults to 0.
 - *rng :* A function to use as random number generator, defaults to Math.random.
 
 ```js

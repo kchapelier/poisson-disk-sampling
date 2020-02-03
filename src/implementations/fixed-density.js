@@ -66,9 +66,9 @@ function getNeighbourhood (dimensionNumber) {
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
- * @param {float} options.maxDistance Maximum distance between each points, defaults to minDistance * 2
- * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
- * @param {function} rng RNG function, defaults to Math.random
+ * @param {float} options.maxDistance Maximum distance between each points
+ * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points
+ * @param {function} rng RNG function
  * @constructor
  */
 function FixedDensityPDS (options, rng) {

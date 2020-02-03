@@ -70,8 +70,8 @@ function getNeighbourhood (dimensionNumber) {
  * @param {float} options.maxDistance Maximum distance between each points
  * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points
  * @param {function} options.distanceFunction Function to control the distance between each point depending on their position, must return a value between 0 and 1
- * @param {float} options.bias When using a distanceFunction, will indicate which point constraint takes priority (0 for the lowest distance, 1 for the highest distance)
- * @param {function} rng RNG function, defaults to Math.random
+ * @param {float} options.bias When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance)
+ * @param {function} rng RNG function
  * @constructor
  */
 function VariableDensityPDS (options, rng) {

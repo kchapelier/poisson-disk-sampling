@@ -14,8 +14,8 @@
     "src/poisson-disk-sampling.js",
     "src/sphere-random.js",
     "src/tiny-ndarray.js",
-    "src/implementations/fixed-distance.js",
-    "src/implementations/variable-distance.js"
+    "src/implementations/fixed-density.js",
+    "src/implementations/variable-density.js"
   ],
   "repository": {
     "type": "git",
