@@ -11,6 +11,7 @@
     "benchmark": "node benchmark.js"
   },
   "files": [
+    "src/neighbourhood.js",
     "src/poisson-disk-sampling.js",
     "src/sphere-random.js",
     "src/tiny-ndarray.js",

@@ -1,20 +1,20 @@
 "use strict";
 
 function tinyNDArrayOfInteger (gridShape) {
-  var dimensions = gridShape.length,
-      totalLength = 1,
-      stride = new Array(dimensions),
-      dimension;
+    var dimensions = gridShape.length,
+        totalLength = 1,
+        stride = new Array(dimensions),
+        dimension;
 
-  for (dimension = dimensions; dimension > 0; dimension--) {
-      stride[dimension - 1] = totalLength;
-      totalLength = totalLength * gridShape[dimension - 1];
-  }
+    for (dimension = dimensions; dimension > 0; dimension--) {
+        stride[dimension - 1] = totalLength;
+        totalLength = totalLength * gridShape[dimension - 1];
+    }
 
-  return {
-      stride: stride,
-      data: new Uint32Array(totalLength)
-  }
+    return {
+        stride: stride,
+        data: new Uint32Array(totalLength)
+    };
 }
 
 function tinyNDArrayOfArray (gridShape) {
@@ -36,7 +36,7 @@ function tinyNDArrayOfArray (gridShape) {
     return {
         stride: stride,
         data: data
-    }
+    };
 }
 
 module.exports = {

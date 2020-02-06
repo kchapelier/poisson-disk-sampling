@@ -1,8 +1,8 @@
 "use strict";
 
 var tinyNDArray = require('./../tiny-ndarray').array,
-    moore = require('moore'),
-    sphereRandom = require('./../sphere-random');
+    sphereRandom = require('./../sphere-random'),
+    getNeighbourhood = require('./../neighbourhood');
 
 /**
  * Get the euclidean distance from two points of arbitrary, but equal, dimensions
@@ -20,47 +20,6 @@ function euclideanDistance (point1, point2) {
 
     return Math.sqrt(result);
 }
-
-/**
- * Get the neighbourhood ordered by distance, including the origin point
- * @param {int} dimensionNumber Number of dimensions
- * @returns {Array} Neighbourhood
- */
-function getNeighbourhood (dimensionNumber) {
-    var neighbourhood = moore(2, dimensionNumber),
-        origin = [],
-        dimension;
-
-    for (dimension = 0; dimension < dimensionNumber; dimension++) {
-        origin.push(0);
-    }
-
-    neighbourhood.push(origin);
-
-    // sort by ascending distance to optimize proximity checks
-    // see point 5.1 in Parallel Poisson Disk Sampling by Li-Yi Wei, 2008
-    // http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.460.3061&rank=1
-    neighbourhood.sort(function (n1, n2) {
-        var squareDist1 = 0,
-            squareDist2 = 0;
-
-        for (var dimension = 0; dimension < dimensionNumber; dimension++) {
-            squareDist1 += Math.pow(n1[dimension], 2);
-            squareDist2 += Math.pow(n2[dimension], 2);
-        }
-
-        if (squareDist1 < squareDist2) {
-            return -1;
-        } else if(squareDist1 > squareDist2) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-
-    return neighbourhood;
-}
-
 
 /**
  * VariableDensityPDS constructor
@@ -84,7 +43,6 @@ function VariableDensityPDS (options, rng) {
 
     this.rng = rng;
 
-    this.newPointBias = this.bias + (1. - this.bias) * 0.2;
     this.dimension = this.shape.length;
     this.deltaDistance = this.maxDistance - this.minDistance;
     this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
@@ -258,7 +216,7 @@ VariableDensityPDS.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.newPointBias);
+            distance = this.minDistance + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.bias);
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
