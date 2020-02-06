@@ -1,19 +1,21 @@
 "use strict";
 
 var PDS = require('../'),
-    should = require('chai').should();
+    should = require('chai').should(),
+    verifyResultPoints = require('./utils/verify-result-points');
 
 function makeDimensionArray(dimensions, value) {
-    var array = [];
+    var array = [],
+        dimension;
 
-    for (var i = 0; i < dimensions; i++) {
-        array.push(value)
+    for (dimension = 0; dimension < dimensions; dimension++) {
+        array.push(value);
     }
 
     return array;
 }
 
-describe('PDS', function () {
+describe('PDS with fixed density', function () {
     describe('fill()', function () {
         it('should return an array of points', function () {
             var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),
@@ -241,6 +243,21 @@ describe('PDS', function () {
             pds.reset();
 
             points.length.should.be.above(0);
+        });
+    });
+
+    describe('general behavior', function () {
+        it('should respect the min and max distance', function () {
+            var pds = new PDS({
+                shape: [50, 50],
+                minDistance: 4,
+                maxDistance: 10,
+                tries: 10
+            });
+
+            var points = pds.fill();
+
+            verifyResultPoints(points, 2, 4, 10);
         });
     });
 });
