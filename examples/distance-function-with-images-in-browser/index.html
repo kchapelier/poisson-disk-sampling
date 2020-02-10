@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <style>
+      #result_container {
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+      }
+
+      #result_container.display {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="result_container">
+      <canvas id="result"></canvas>
+      <p>Generated <span id="result_number">x</span> points.</p>
+    </div>
+
+    <script src="./../../build/poisson-disk-sampling.min.js"></script>
+    <script>
+      function getImageData(url, callback) {
+        // load an image, draw it on a canvas, retrieve the pixel values / image data
+        // see https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
+
+        var canvas = document.createElement('canvas'),
+            context = canvas.getContext('2d'),
+            img = new Image();
+
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          context.drawImage(img, 0, 0);
+
+          callback(context.getImageData(0, 0, img.width, img.height));
+        };
+
+        img.src = url;
+      }
+
+      getImageData('./beethoven.png', function (imageData) {
+        var pds = new PoissonDiskSampling({
+          shape: [imageData.width, imageData.height],
+          minDistance: 1.1,
+          maxDistance: 55,
+          tries: 15,
+          distanceFunction: function (point) {
+            // get the index of the red pixel value for the given coordinates (point)
+            var pixelRedIndex = (Math.round(point[0]) + Math.round(point[1]) * imageData.width) * 4;
+
+            // map the value to 0-1 and apply Math.pow for flavor
+            return Math.pow(imageData.data[pixelRedIndex] / 255, 2.7);
+          }
+        });
+
+        var points = pds.fill();
+
+        var canvas = document.getElementById('result'),
+            context = canvas.getContext('2d');
+
+        canvas.width = imageData.width;
+        canvas.height = imageData.height;
+
+        for (var i = 0; i < points.length-1; i++) {
+          context.fillRect(Math.round(points[i][0]), Math.round(points[i][1]), 1, 1)
+        }
+
+        document.getElementById('result_number').innerHTML = points.length.toFixed(0);
+
+        document.getElementById('result_container').className = 'display';
+      });
+    </script>
+  </body>
+</html>

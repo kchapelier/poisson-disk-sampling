@@ -24,8 +24,8 @@ module.exports = function moore(range, dimensions) {
 "use strict";
 
 var tinyNDArray = require('./../tiny-ndarray').integer,
-    moore = require('moore'),
-    sphereRandom = require('./../sphere-random');
+    sphereRandom = require('./../sphere-random'),
+    getNeighbourhood = require('./../neighbourhood');
 
 /**
  * Get the squared euclidean distance from two points of arbitrary, but equal, dimensions
@@ -42,46 +42,6 @@ function squaredEuclideanDistance (point1, point2) {
     }
 
     return result;
-}
-
-/**
- * Get the neighbourhood ordered by distance, including the origin point
- * @param {int} dimensionNumber Number of dimensions
- * @returns {Array} Neighbourhood
- */
-function getNeighbourhood (dimensionNumber) {
-    var neighbourhood = moore(2, dimensionNumber),
-        origin = [],
-        dimension;
-
-    for (dimension = 0; dimension < dimensionNumber; dimension++) {
-        origin.push(0);
-    }
-
-    neighbourhood.push(origin);
-
-    // sort by ascending distance to optimize proximity checks
-    // see point 5.1 in Parallel Poisson Disk Sampling by Li-Yi Wei, 2008
-    // http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.460.3061&rank=1
-    neighbourhood.sort(function (n1, n2) {
-        var squareDist1 = 0,
-            squareDist2 = 0;
-
-        for (var dimension = 0; dimension < dimensionNumber; dimension++) {
-            squareDist1 += Math.pow(n1[dimension], 2);
-            squareDist2 += Math.pow(n2[dimension], 2);
-        }
-
-        if (squareDist1 < squareDist2) {
-            return -1;
-        } else if(squareDist1 > squareDist2) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-
-    return neighbourhood;
 }
 
 /**
@@ -126,6 +86,7 @@ function FixedDensityPDS (options, rng) {
 FixedDensityPDS.prototype.shape = null;
 FixedDensityPDS.prototype.dimension = null;
 FixedDensityPDS.prototype.minDistance = null;
+FixedDensityPDS.prototype.maxDistance = null;
 FixedDensityPDS.prototype.squaredMinDistance = null;
 FixedDensityPDS.prototype.deltaDistance = null;
 FixedDensityPDS.prototype.cellSize = null;
@@ -310,6 +271,14 @@ FixedDensityPDS.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @throws Will always throw an error.
+ */
+FixedDensityPDS.prototype.getAllPointsWithDistance = function () {
+    throw new Error('PoissonDiskSampling: getAllPointsWithDistance() is not available in fixed-density implementation');
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 FixedDensityPDS.prototype.reset = function () {
@@ -331,12 +300,12 @@ FixedDensityPDS.prototype.reset = function () {
 
 module.exports = FixedDensityPDS;
 
-},{"./../sphere-random":5,"./../tiny-ndarray":6,"moore":1}],3:[function(require,module,exports){
+},{"./../neighbourhood":4,"./../sphere-random":6,"./../tiny-ndarray":7}],3:[function(require,module,exports){
 "use strict";
 
 var tinyNDArray = require('./../tiny-ndarray').array,
-    moore = require('moore'),
-    sphereRandom = require('./../sphere-random');
+    sphereRandom = require('./../sphere-random'),
+    getNeighbourhood = require('./../neighbourhood');
 
 /**
  * Get the euclidean distance from two points of arbitrary, but equal, dimensions
@@ -354,47 +323,6 @@ function euclideanDistance (point1, point2) {
 
     return Math.sqrt(result);
 }
-
-/**
- * Get the neighbourhood ordered by distance, including the origin point
- * @param {int} dimensionNumber Number of dimensions
- * @returns {Array} Neighbourhood
- */
-function getNeighbourhood (dimensionNumber) {
-    var neighbourhood = moore(2, dimensionNumber),
-        origin = [],
-        dimension;
-
-    for (dimension = 0; dimension < dimensionNumber; dimension++) {
-        origin.push(0);
-    }
-
-    neighbourhood.push(origin);
-
-    // sort by ascending distance to optimize proximity checks
-    // see point 5.1 in Parallel Poisson Disk Sampling by Li-Yi Wei, 2008
-    // http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.460.3061&rank=1
-    neighbourhood.sort(function (n1, n2) {
-        var squareDist1 = 0,
-            squareDist2 = 0;
-
-        for (var dimension = 0; dimension < dimensionNumber; dimension++) {
-            squareDist1 += Math.pow(n1[dimension], 2);
-            squareDist2 += Math.pow(n2[dimension], 2);
-        }
-
-        if (squareDist1 < squareDist2) {
-            return -1;
-        } else if(squareDist1 > squareDist2) {
-            return 1;
-        } else {
-            return 0;
-        }
-    });
-
-    return neighbourhood;
-}
-
 
 /**
  * VariableDensityPDS constructor
@@ -418,7 +346,6 @@ function VariableDensityPDS (options, rng) {
 
     this.rng = rng;
 
-    this.newPointBias = this.bias + (1. - this.bias) * 0.2;
     this.dimension = this.shape.length;
     this.deltaDistance = this.maxDistance - this.minDistance;
     this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
@@ -445,9 +372,12 @@ function VariableDensityPDS (options, rng) {
 VariableDensityPDS.prototype.shape = null;
 VariableDensityPDS.prototype.dimension = null;
 VariableDensityPDS.prototype.minDistance = null;
+VariableDensityPDS.prototype.maxDistance = null;
 VariableDensityPDS.prototype.deltaDistance = null;
 VariableDensityPDS.prototype.cellSize = null;
 VariableDensityPDS.prototype.maxTries = null;
+VariableDensityPDS.prototype.distanceFunction = null;
+VariableDensityPDS.prototype.bias = null;
 VariableDensityPDS.prototype.rng = null;
 VariableDensityPDS.prototype.neighbourhood = null;
 
@@ -455,6 +385,7 @@ VariableDensityPDS.prototype.currentPoint = null;
 VariableDensityPDS.prototype.currentDistance = null;
 VariableDensityPDS.prototype.processList = null;
 VariableDensityPDS.prototype.samplePoints = null;
+VariableDensityPDS.prototype.sampleDistance = null;
 VariableDensityPDS.prototype.gridShape = null;
 VariableDensityPDS.prototype.grid = null;
 
@@ -592,7 +523,7 @@ VariableDensityPDS.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.newPointBias);
+            distance = this.minDistance + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.bias);
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
@@ -646,6 +577,31 @@ VariableDensityPDS.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @returns {Array[]} Sample points with their distance function result
+ */
+VariableDensityPDS.prototype.getAllPointsWithDistance = function () {
+    var result = new Array(this.samplePoints.length),
+        i = 0,
+        dimension = 0,
+        point;
+
+    for (i = 0; i < this.samplePoints.length; i++) {
+        point = new Array(this.dimension + 1);
+
+        for (dimension = 0; dimension < this.dimension; dimension++) {
+            point[dimension] = this.samplePoints[i][dimension];
+        }
+
+        point[this.dimension] = this.sampleDistance[i];
+
+        result[i] = point;
+    }
+
+    return result;
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 VariableDensityPDS.prototype.reset = function () {
@@ -667,7 +623,54 @@ VariableDensityPDS.prototype.reset = function () {
 
 module.exports = VariableDensityPDS;
 
-},{"./../sphere-random":5,"./../tiny-ndarray":6,"moore":1}],4:[function(require,module,exports){
+},{"./../neighbourhood":4,"./../sphere-random":6,"./../tiny-ndarray":7}],4:[function(require,module,exports){
+"use strict";
+
+var moore = require('moore');
+
+/**
+ * Get the neighbourhood ordered by distance, including the origin point
+ * @param {int} dimensionNumber Number of dimensions
+ * @returns {Array} Neighbourhood
+ */
+function getNeighbourhood (dimensionNumber) {
+    var neighbourhood = moore(2, dimensionNumber),
+        origin = [],
+        dimension;
+
+    for (dimension = 0; dimension < dimensionNumber; dimension++) {
+        origin.push(0);
+    }
+
+    neighbourhood.push(origin);
+
+    // sort by ascending distance to optimize proximity checks
+    // see point 5.1 in Parallel Poisson Disk Sampling by Li-Yi Wei, 2008
+    // http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.460.3061&rank=1
+    neighbourhood.sort(function (n1, n2) {
+        var squareDist1 = 0,
+            squareDist2 = 0,
+            dimension;
+
+        for (dimension = 0; dimension < dimensionNumber; dimension++) {
+            squareDist1 += Math.pow(n1[dimension], 2);
+            squareDist2 += Math.pow(n2[dimension], 2);
+        }
+
+        if (squareDist1 < squareDist2) {
+            return -1;
+        } else if(squareDist1 > squareDist2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+
+    return neighbourhood;
+}
+
+module.exports = getNeighbourhood;
+},{"moore":1}],5:[function(require,module,exports){
 "use strict";
 
 var FixedDensityPDS = require('./implementations/fixed-density');
@@ -747,6 +750,15 @@ PoissonDiskSampling.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @throws Will throw an error if a distance function was not provided to the constructor.
+ * @returns {Array[]} Sample points with their distance function result
+ */
+PoissonDiskSampling.prototype.getAllPointsWithDistance = function () {
+    return this.implementation.getAllPointsWithDistance();
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 PoissonDiskSampling.prototype.reset = function () {
@@ -755,7 +767,7 @@ PoissonDiskSampling.prototype.reset = function () {
 
 module.exports = PoissonDiskSampling;
 
-},{"./implementations/fixed-density":2,"./implementations/variable-density":3}],5:[function(require,module,exports){
+},{"./implementations/fixed-density":2,"./implementations/variable-density":3}],6:[function(require,module,exports){
 "use strict";
 
 // sphere-random module by Mikola Lysenko under the MIT License
@@ -803,24 +815,24 @@ function sampleSphere(d, rng) {
     return v;
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 function tinyNDArrayOfInteger (gridShape) {
-  var dimensions = gridShape.length,
-      totalLength = 1,
-      stride = new Array(dimensions),
-      dimension;
+    var dimensions = gridShape.length,
+        totalLength = 1,
+        stride = new Array(dimensions),
+        dimension;
 
-  for (dimension = dimensions; dimension > 0; dimension--) {
-      stride[dimension - 1] = totalLength;
-      totalLength = totalLength * gridShape[dimension - 1];
-  }
+    for (dimension = dimensions; dimension > 0; dimension--) {
+        stride[dimension - 1] = totalLength;
+        totalLength = totalLength * gridShape[dimension - 1];
+    }
 
-  return {
-      stride: stride,
-      data: new Uint32Array(totalLength)
-  }
+    return {
+        stride: stride,
+        data: new Uint32Array(totalLength)
+    };
 }
 
 function tinyNDArrayOfArray (gridShape) {
@@ -842,12 +854,12 @@ function tinyNDArrayOfArray (gridShape) {
     return {
         stride: stride,
         data: data
-    }
+    };
 }
 
 module.exports = {
     integer: tinyNDArrayOfInteger,
     array: tinyNDArrayOfArray
 };
-},{}]},{},[4])(4)
+},{}]},{},[5])(5)
 });

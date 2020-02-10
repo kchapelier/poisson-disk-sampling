@@ -69,9 +69,12 @@ function VariableDensityPDS (options, rng) {
 VariableDensityPDS.prototype.shape = null;
 VariableDensityPDS.prototype.dimension = null;
 VariableDensityPDS.prototype.minDistance = null;
+VariableDensityPDS.prototype.maxDistance = null;
 VariableDensityPDS.prototype.deltaDistance = null;
 VariableDensityPDS.prototype.cellSize = null;
 VariableDensityPDS.prototype.maxTries = null;
+VariableDensityPDS.prototype.distanceFunction = null;
+VariableDensityPDS.prototype.bias = null;
 VariableDensityPDS.prototype.rng = null;
 VariableDensityPDS.prototype.neighbourhood = null;
 
@@ -79,6 +82,7 @@ VariableDensityPDS.prototype.currentPoint = null;
 VariableDensityPDS.prototype.currentDistance = null;
 VariableDensityPDS.prototype.processList = null;
 VariableDensityPDS.prototype.samplePoints = null;
+VariableDensityPDS.prototype.sampleDistance = null;
 VariableDensityPDS.prototype.gridShape = null;
 VariableDensityPDS.prototype.grid = null;
 

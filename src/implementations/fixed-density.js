@@ -63,6 +63,7 @@ function FixedDensityPDS (options, rng) {
 FixedDensityPDS.prototype.shape = null;
 FixedDensityPDS.prototype.dimension = null;
 FixedDensityPDS.prototype.minDistance = null;
+FixedDensityPDS.prototype.maxDistance = null;
 FixedDensityPDS.prototype.squaredMinDistance = null;
 FixedDensityPDS.prototype.deltaDistance = null;
 FixedDensityPDS.prototype.cellSize = null;
