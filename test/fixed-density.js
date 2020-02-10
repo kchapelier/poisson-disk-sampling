@@ -59,6 +59,18 @@ describe('PDS with fixed density', function () {
         });
     });
 
+    describe('getAllPointsWithDistance()', function () {
+        it('should throw an error', function () {
+            var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });
+
+            pds.fill();
+
+            (function () {
+                pds.getAllPointsWithDistance();
+            }).should.throw(Error, /is not available in fixed-density implementation/);
+        });
+    });
+
     describe('addRandomPoint()', function () {
         it('should return a point within the provided grid size', function () {
             var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 }),

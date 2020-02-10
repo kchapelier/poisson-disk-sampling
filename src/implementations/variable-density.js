@@ -270,6 +270,31 @@ VariableDensityPDS.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @returns {Array[]} Sample points with their distance function result
+ */
+VariableDensityPDS.prototype.getAllPointsWithDistance = function () {
+    var result = new Array(this.samplePoints.length),
+        i = 0,
+        dimension = 0,
+        point;
+
+    for (i = 0; i < this.samplePoints.length; i++) {
+        point = new Array(this.dimension + 1);
+
+        for (dimension = 0; dimension < this.dimension; dimension++) {
+            point[dimension] = this.samplePoints[i][dimension];
+        }
+
+        point[this.dimension] = this.sampleDistance[i];
+
+        result[i] = point;
+    }
+
+    return result;
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 VariableDensityPDS.prototype.reset = function () {

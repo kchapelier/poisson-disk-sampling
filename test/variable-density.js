@@ -59,6 +59,60 @@ describe('PDS with variable density', function () {
         });
     });
 
+    describe('getAllPointsWithDistance()', function () {
+        it('should return an empty array after the instantiation', function () {
+            var pds = new PDS({ shape: [30, 30], minDistance: 4, maxDistance: 8, tries: 10, distanceFunction: Math.random }),
+                points = pds.getAllPointsWithDistance();
+
+            points.should.be.instanceof(Array);
+            points.length.should.be.equal(0);
+        });
+
+        it('should return the distance function result after the points coordinates on points added using fill()', function () {
+            var pds = new PDS({
+                shape: [30, 30],
+                minDistance: 4,
+                maxDistance: 8,
+                tries: 10,
+                distanceFunction: function() {
+                    return 0.4;
+                }
+            });
+
+            var basePoints = pds.fill();
+
+            var points = pds.getAllPointsWithDistance();
+
+            points.length.should.equal(basePoints.length);
+
+            for (var i = 0; i < points.length; i++) {
+                points[i].length.should.equal(3);
+                points[i][0].should.equal(basePoints[i][0]);
+                points[i][1].should.equal(basePoints[i][1]);
+                points[i][2].should.equal(0.4);
+            }
+        });
+
+        it('should return the distance function result on points added manually', function () {
+            var pds = new PDS({
+                shape: [30, 30],
+                minDistance: 4,
+                maxDistance: 8,
+                tries: 10,
+                distanceFunction: function() {
+                    return 0.6;
+                }
+            });
+
+            pds.addPoint([10, 10]);
+
+            var points = pds.getAllPointsWithDistance();
+
+            points.length.should.equal(1);
+            points[0][2].should.equal(0.6);
+        });
+    });
+
     describe('addRandomPoint()', function () {
         it('should return a point within the provided grid size', function () {
             var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10, distanceFunction: Math.random }),

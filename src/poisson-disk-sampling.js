@@ -77,6 +77,15 @@ PoissonDiskSampling.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @throws Will throw an error if a distance function was not provided to the constructor.
+ * @returns {Array[]} Sample points with their distance function result
+ */
+PoissonDiskSampling.prototype.getAllPointsWithDistance = function () {
+    return this.implementation.getAllPointsWithDistance();
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 PoissonDiskSampling.prototype.reset = function () {

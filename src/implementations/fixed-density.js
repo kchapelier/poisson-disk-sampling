@@ -247,6 +247,14 @@ FixedDensityPDS.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get all the points in the grid along with the result of the distance function.
+ * @throws Will always throw an error.
+ */
+FixedDensityPDS.prototype.getAllPointsWithDistance = function () {
+    throw new Error('PoissonDiskSampling: getAllPointsWithDistance() is not available in fixed-density implementation');
+};
+
+/**
  * Reinitialize the grid as well as the internal state
  */
 FixedDensityPDS.prototype.reset = function () {
