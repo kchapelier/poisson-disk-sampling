@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.0.0/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.1.0/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -135,7 +135,8 @@ Returns the entirety of the points in the grid as an array of coordinate arrays.
 ```js
 var points = pds.fill();
 
-console.log(points[0]); // prints something like [30, 16]
+console.log(points[0]);
+// prints something like [30, 16]
 ```
 
 **pds.getAllPoints()**
@@ -147,7 +148,8 @@ Returns the entirety of the points in the grid as an array of coordinate arrays.
 ```js
 var points = pds.getAllPoints();
 
-console.log(points[0]); // prints something like [30, 16]
+console.log(points[0]);
+// prints something like [30, 16]
 ```
 
 **pds.getAllPointsWithDistance()**
@@ -161,7 +163,8 @@ Calling this method on an instance of PoissonDiskSampling without a distanceFunc
 ```js
 var points = pds.getAllPointsWithDistance();
 
-console.log(points[0]); // prints something like [30, 16, 0.4], 0.4 being the result of the distance function
+console.log(points[0]);
+// prints something like [30, 16, 0.4], 0.4 being the result of the distance function
 ```
 
 **pds.addRandomPoint()**
@@ -219,8 +222,8 @@ Internally, there are two different implementations of the algorithm. The implem
 ### [2.1.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.1.0) (2020-02-10) :
 
 - Implement getAllPointsWithDistance()
-- Fix issue where the actual minDistance could be larger than the one set by the user in the variable density implementation
 - Add a test suite for the variable density implementation
+- Fix an issue where the actual minDistance could be larger than the one set by the user in the variable density implementation
 
 ### [2.0.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.0.0) (2020-02-03) :
 
@@ -273,8 +276,7 @@ Internally, there are two different implementations of the algorithm. The implem
 
 ## Roadmap
 
-- Make a test suite for the variable density implementation.
-- Investigate possible performance tweaks spotted while working on the variable density implementation.
+- Make it possible to import/require only one of the implementation.
 
 ## How to contribute ?
 
