@@ -70,6 +70,10 @@ console.log(points); // array of sample points, themselves represented as simple
 
 <img src="https://github.com/kchapelier/poisson-disk-sampling/raw/master/img/example2.png" style="image-rendering:pixelated; width:500px;"></img>
 
+### Complete working example
+
+[Demo online](http://www.kchapelier.com/poisson-disk-sampling/examples/distance-function-with-images-in-browser/) | [Source code](https://github.com/kchapelier/poisson-disk-sampling/tree/master/examples/distance-function-with-images-in-browser/)
+
 ## Public API
 
 ### Constructor
@@ -131,7 +135,7 @@ Returns the entirety of the points in the grid as an array of coordinate arrays.
 ```js
 var points = pds.fill();
 
-console.log(points[0]); // prints something like [30, 16, 51]
+console.log(points[0]); // prints something like [30, 16]
 ```
 
 **pds.getAllPoints()**
@@ -143,7 +147,21 @@ Returns the entirety of the points in the grid as an array of coordinate arrays.
 ```js
 var points = pds.getAllPoints();
 
-console.log(points[0]); // prints something like [30, 16, 51]
+console.log(points[0]); // prints something like [30, 16]
+```
+
+**pds.getAllPointsWithDistance()**
+
+Get all the points present in the grid along with the result of the distance function.
+
+Returns the entirety of the points in the grid as an array of coordinate + distance function result arrays. The points are sorted in their generation order.
+
+Calling this method on an instance of PoissonDiskSampling without a distanceFunction will throw an error.
+
+```js
+var points = pds.getAllPointsWithDistance();
+
+console.log(points[0]); // prints something like [30, 16, 0.4], 0.4 being the result of the distance function
 ```
 
 **pds.addRandomPoint()**
@@ -186,11 +204,23 @@ Reinitialize the grid as well as the internal state.
 
 When doing multiple samplings in the same grid, it is preferable to reuse the same instance of PoissonDiskSampling instead of creating a new one for each sampling.
 
+## Usages in the wild
+
+ * Creative Experiments by Lionel Radisson: [#1](https://twitter.com/MAKIO135/status/1225665997341749248) / [#2](https://twitter.com/MAKIO135/status/1224948519871696901)
+ * ["Poisson disc squares", by Matt DesLauriers](https://twitter.com/mattdesl/status/973197660617355269)
+ * [Mapgen4, a procedural wilderness map generator by Amit Patel](https://github.com/redblobgames/mapgen4)
+
 ## Implementation notes
 
 Internally, there are two different implementations of the algorithm. The implementation is chosen depending on whether a distanceFunction is passed to the constructor. The library is designed in such a way as to keep it transparent to the end user.
 
 ## History
+
+### [2.1.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.1.0) (2020-02-10) :
+
+- Implement getAllPointsWithDistance()
+- Fix issue where the actual minDistance could be larger than the one set by the user in the variable density implementation
+- Add a test suite for the variable density implementation
 
 ### [2.0.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.0.0) (2020-02-03) :
 
