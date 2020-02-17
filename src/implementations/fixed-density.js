@@ -26,17 +26,22 @@ function squaredEuclideanDistance (point1, point2) {
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
- * @param {float} options.maxDistance Maximum distance between each points
- * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points
- * @param {function} rng RNG function
+ * @param {float} [options.maxDistance] Maximum distance between each points, defaults to minDistance * 2
+ * @param {int} [options.tries] Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
+ * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
 function FixedDensityPDS (options, rng) {
+    if (typeof options.distanceFunction === 'function') {
+        throw new Error('PoissonDiskSampling: Tried to instantiate the fixed density implementation with a distanceFunction');
+    }
+
     this.shape = options.shape;
     this.minDistance = options.minDistance;
-    this.maxDistance = options.maxDistance;
-    this.maxTries = options.tries;
-    this.rng = rng;
+    this.maxDistance = options.maxDistance || options.minDistance * 2;
+    this.maxTries = Math.ceil(Math.max(1, options.tries || 30));
+
+    this.rng = rng || Math.random;
 
     this.dimension = this.shape.length;
     this.squaredMinDistance = this.minDistance * this.minDistance;

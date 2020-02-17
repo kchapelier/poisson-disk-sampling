@@ -16,6 +16,17 @@ function makeDimensionArray(dimensions, value) {
 }
 
 describe('PDS with variable density', function () {
+    describe('Facade constructor', function () {
+        it('should use the variable density implementation even if minDistance and maxDistance are equal', function () {
+            var pds = new PDS({ shape: [20, 20], minDistance: 4, maxDistance: 4, tries: 10, distanceFunction: Math.random });
+            pds.fill();
+
+            (function () {
+                pds.getAllPointsWithDistance();
+            }).should.not.throw();
+        });
+    });
+
     describe('fill()', function () {
         it('should return an array of points', function () {
             var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10, distanceFunction: Math.random }),

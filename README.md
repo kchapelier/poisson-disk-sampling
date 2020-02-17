@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.1.0/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.0/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -217,9 +217,28 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 Internally, there are two different implementations of the algorithm. The implementation is chosen depending on whether a distanceFunction is passed to the constructor. The library is designed in such a way as to keep it transparent to the end user.
 
+In order to reduce the impact of this dependency on the size of the javascript bundle(s) in web projects, it is possible to explicitly require a given implementation as such :
+
+```
+var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/fixed-density');
+```
+
+or
+
+```
+var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/variable-density');
+```
+
 ## History
 
+### [2.2.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.0) (2020-02-17) :
+
+- Do not ignore distanceFunction anymore if minDistance and maxDistance are equal
+- Make it possible to explicitly require a specific implementation
+
 ### [2.1.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.1.0) (2020-02-10) :
+
+Note: due to an [issue](https://status.npmjs.org/incidents/1dpd0zjyhj2v?u=3q2zbsynvt3t) on npmjs.com this version was not listed on the website even though it was available through the npm CLI.
 
 - Implement getAllPointsWithDistance()
 - Add a test suite for the variable density implementation

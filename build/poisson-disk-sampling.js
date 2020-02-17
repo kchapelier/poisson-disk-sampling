@@ -49,17 +49,22 @@ function squaredEuclideanDistance (point1, point2) {
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
- * @param {float} options.maxDistance Maximum distance between each points
- * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points
- * @param {function} rng RNG function
+ * @param {float} [options.maxDistance] Maximum distance between each points, defaults to minDistance * 2
+ * @param {int} [options.tries] Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
+ * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
 function FixedDensityPDS (options, rng) {
+    if (typeof options.distanceFunction === 'function') {
+        throw new Error('PoissonDiskSampling: Tried to instantiate the fixed density implementation with a distanceFunction');
+    }
+
     this.shape = options.shape;
     this.minDistance = options.minDistance;
-    this.maxDistance = options.maxDistance;
-    this.maxTries = options.tries;
-    this.rng = rng;
+    this.maxDistance = options.maxDistance || options.minDistance * 2;
+    this.maxTries = Math.ceil(Math.max(1, options.tries || 30));
+
+    this.rng = rng || Math.random;
 
     this.dimension = this.shape.length;
     this.squaredMinDistance = this.minDistance * this.minDistance;
@@ -329,22 +334,26 @@ function euclideanDistance (point1, point2) {
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
- * @param {float} options.maxDistance Maximum distance between each points
- * @param {int} options.tries Number of times the algorithm will try to place a point in the neighbourhood of another points
+ * @param {float} [options.maxDistance] Maximum distance between each points, defaults to minDistance * 2
+ * @param {int} [options.tries] Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
  * @param {function} options.distanceFunction Function to control the distance between each point depending on their position, must return a value between 0 and 1
- * @param {float} options.bias When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance)
- * @param {function} rng RNG function
+ * @param {float} [options.bias] When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance), defaults to 0
+ * @param {function|null} rng RNG function, defaults to Math.random
  * @constructor
  */
 function VariableDensityPDS (options, rng) {
+    if (typeof options.distanceFunction !== 'function') {
+        throw new Error('PoissonDiskSampling: Tried to instantiate the variable density implementation without a distanceFunction');
+    }
+
     this.shape = options.shape;
     this.minDistance = options.minDistance;
-    this.maxDistance = options.maxDistance;
-    this.maxTries = options.tries;
+    this.maxDistance = options.maxDistance || options.minDistance * 2;
+    this.maxTries = Math.ceil(Math.max(1, options.tries || 30));
     this.distanceFunction = options.distanceFunction;
-    this.bias = options.bias;
+    this.bias = Math.max(0, Math.min(1, options.bias || 0));
 
-    this.rng = rng;
+    this.rng = rng || Math.random;
 
     this.dimension = this.shape.length;
     this.deltaDistance = this.maxDistance - this.minDistance;
@@ -684,21 +693,14 @@ var VariableDensityPDS = require('./implementations/variable-density');
  * @param {float} [options.maxDistance] Maximum distance between each points, defaults to minDistance * 2
  * @param {int} [options.tries] Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
  * @param {function|null} [options.distanceFunction] Function to control the distance between each point depending on their position, must return a value between 0 and 1
- * @param {function|null} [options.bias] When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance), defaults to 0.
+ * @param {function|null} [options.bias] When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance), defaults to 0
  * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
 function PoissonDiskSampling (options, rng) {
-    rng = rng || Math.random;
-
-    options.maxDistance = options.maxDistance || options.minDistance * 2;
-    options.tries = Math.ceil(Math.max(1, options.tries || 30));
-
     this.shape = options.shape;
 
-    if (options.minDistance !== options.maxDistance && typeof options.distanceFunction === 'function') {
-        options.bias = Math.max(0, Math.min(1, options.bias || 0));
-
+    if (typeof options.distanceFunction === 'function') {
         this.implementation = new VariableDensityPDS(options, rng);
     } else {
         this.implementation = new FixedDensityPDS(options, rng);
