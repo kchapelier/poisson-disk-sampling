@@ -238,7 +238,7 @@ var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/var
 
 ### [2.1.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.1.0) (2020-02-10) :
 
-*Due to an [issue](https://status.npmjs.org/incidents/1dpd0zjyhj2v?u=3q2zbsynvt3t) on npmjs.com this version was not listed on the website even though it was available through the CLI.
+*Due to an [issue](https://status.npmjs.org/incidents/1dpd0zjyhj2v?u=3q2zbsynvt3t) on npmjs.com this version was not listed on the website even though it was available through the CLI.*
 
 - Implement getAllPointsWithDistance()
 - Add a test suite for the variable density implementation
