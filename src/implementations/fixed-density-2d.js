@@ -1,25 +1,14 @@
 "use strict";
 
-var tinyNDArray = require('./../tiny-ndarray').integer,
-    sphereRandom = require('./../sphere-random'),
-    getNeighbourhood = require('./../neighbourhood');
-
 /**
- * Get the squared euclidean distance from two points of arbitrary, but equal, dimensions
- * @param {Array} point1
- * @param {Array} point2
- * @returns {number} Squared euclidean distance
+ * The code below is experimental and not shipped to NPM.
+ * 
+ * This is a baseline implementation for a 2d-only fixed density poisson disk sampling.
+ * 
  */
-function squaredEuclideanDistance (point1, point2) {
-    var result = 0,
-        i = 0;
 
-    for (; i < point1.length; i++) {
-        result += Math.pow(point1[i] - point2[i], 2);
-    }
-
-    return result;
-}
+var tinyNDArray = require('../tiny-ndarray').integer,
+    getNeighbourhood = require('../neighbourhood');
 
 const epsilon = 1e-14;
 
@@ -28,7 +17,6 @@ const epsilon = 1e-14;
  * @param {object} options Options
  * @param {Array} options.shape Shape of the space
  * @param {float} options.minDistance Minimum distance between each points
- * @param {float} [options.maxDistance] Maximum distance between each points, defaults to minDistance * 2
  * @param {int} [options.tries] Number of times the algorithm will try to place a point in the neighbourhood of another points, defaults to 30
  * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
@@ -40,18 +28,17 @@ function FixedDensityPDS (options, rng) {
 
     this.shape = options.shape;
     this.minDistance = options.minDistance;
-    this.maxDistance = options.maxDistance || options.minDistance * 2;
     this.maxTries = Math.ceil(Math.max(1, options.tries || 30));
 
     this.rng = rng || Math.random;
 
-    this.dimension = this.shape.length;
     this.squaredMinDistance = this.minDistance * this.minDistance;
     this.minDistancePlusEpsilon = this.minDistance + epsilon;
-    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon - epsilon);
-    this.cellSize = this.minDistance / Math.sqrt(this.dimension);
+    this.cellSize = this.minDistance / Math.sqrt(2);
 
-    this.neighbourhood = getNeighbourhood(this.dimension, options.noCheckOrder);
+    this.neighbourhood = getNeighbourhood(2, options.noCheckOrder);
+
+    //console.log(this.neighbourhood);
 
     this.currentPoint = null;
     this.processList = [];
@@ -59,22 +46,18 @@ function FixedDensityPDS (options, rng) {
 
     // cache grid
 
-    this.gridShape = [];
-
-    for (var i = 0; i < this.dimension; i++) {
-        this.gridShape.push(Math.ceil(this.shape[i] / this.cellSize));
-    }
+    this.gridShape = [
+        Math.ceil(this.shape[0] / this.cellSize),
+        Math.ceil(this.shape[1] / this.cellSize)
+    ];
 
     this.grid = tinyNDArray(this.gridShape); //will store references to samplePoints
 }
 
 FixedDensityPDS.prototype.shape = null;
-FixedDensityPDS.prototype.dimension = null;
 FixedDensityPDS.prototype.minDistance = null;
-FixedDensityPDS.prototype.maxDistance = null;
 FixedDensityPDS.prototype.minDistancePlusEpsilon = null;
 FixedDensityPDS.prototype.squaredMinDistance = null;
-FixedDensityPDS.prototype.deltaDistance = null;
 FixedDensityPDS.prototype.cellSize = null;
 FixedDensityPDS.prototype.maxTries = null;
 FixedDensityPDS.prototype.rng = null;
@@ -91,13 +74,10 @@ FixedDensityPDS.prototype.grid = null;
  * @returns {Array} The point added to the grid
  */
 FixedDensityPDS.prototype.addRandomPoint = function () {
-    var point = new Array(this.dimension);
-
-    for (var i = 0; i < this.dimension; i++) {
-        point[i] = this.rng() * this.shape[i];
-    }
-
-    return this.directAddPoint(point);
+    return this.directAddPoint([
+        this.rng() * this.shape[0],
+        this.rng() * this.shape[1]
+    ]);
 };
 
 /**
@@ -106,16 +86,7 @@ FixedDensityPDS.prototype.addRandomPoint = function () {
  * @returns {Array|null} The point added to the grid, null if the point is out of the bound or not of the correct dimension
  */
 FixedDensityPDS.prototype.addPoint = function (point) {
-    var dimension,
-        valid = true;
-
-    if (point.length === this.dimension) {
-        for (dimension = 0; dimension < this.dimension && valid; dimension++) {
-            valid = (point[dimension] >= 0 && point[dimension] <= this.shape[dimension]);
-        }
-    } else {
-        valid = false;
-    }
+    var valid = point.length === 2 && point[0] >= 0 && point[0] <= this.shape[0] && point[1] >= 0 && point[1] <= this.shape[1];
 
     return valid ? this.directAddPoint(point) : null;
 };
@@ -127,16 +98,10 @@ FixedDensityPDS.prototype.addPoint = function (point) {
  * @protected
  */
 FixedDensityPDS.prototype.directAddPoint = function (point) {
-    var internalArrayIndex = 0,
-        stride = this.grid.stride,
-        dimension;
-
     this.processList.push(point);
     this.samplePoints.push(point);
 
-    for (dimension = 0; dimension < this.dimension; dimension++) {
-        internalArrayIndex += ((point[dimension] / this.cellSize) | 0) * stride[dimension];
-    }
+    var internalArrayIndex = ((point[0] / this.cellSize) | 0) * this.grid.stride[0] + ((point[1] / this.cellSize) | 0);
 
     this.grid.data[internalArrayIndex] = this.samplePoints.length; // store the point reference
 
@@ -150,7 +115,7 @@ FixedDensityPDS.prototype.directAddPoint = function (point) {
  * @protected
  */
 FixedDensityPDS.prototype.inNeighbourhood = function (point) {
-    var dimensionNumber = this.dimension,
+    var dimensionNumber = 2,
         stride = this.grid.stride,
         neighbourIndex,
         internalArrayIndex,
@@ -168,14 +133,14 @@ FixedDensityPDS.prototype.inNeighbourhood = function (point) {
                 internalArrayIndex = -1;
                 break;
             }
-            
+
             internalArrayIndex += currentDimensionValue * stride[dimension];
         }
 
         if (internalArrayIndex !== -1 && this.grid.data[internalArrayIndex] !== 0) {
             existingPoint = this.samplePoints[this.grid.data[internalArrayIndex] - 1];
 
-            if (squaredEuclideanDistance(point, existingPoint) < this.squaredMinDistance) {
+            if (Math.pow(point[0] - existingPoint[0], 2) + Math.pow(point[1] - existingPoint[1], 2) < this.squaredMinDistance) {
                 return true;
             }
         }
@@ -197,6 +162,9 @@ FixedDensityPDS.prototype.next = function () {
         inShape,
         i;
 
+    var pi2 = Math.PI * 2;
+    var angleIncrement = 1 / this.maxTries * pi2;
+
     while (this.processList.length > 0) {
         if (this.currentPoint === null) {
             this.currentPoint = this.processList.shift();
@@ -204,28 +172,26 @@ FixedDensityPDS.prototype.next = function () {
 
         currentPoint = this.currentPoint;
 
+        angle = this.rng() * pi2;
+
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistancePlusEpsilon + this.deltaDistance * this.rng();
 
-            if (this.dimension === 2) {
-                angle = this.rng() * Math.PI * 2;
-                newPoint = [
-                    Math.cos(angle),
-                    Math.sin(angle)
-                ];
-            } else {
-                newPoint = sphereRandom(this.dimension, this.rng);
-            }
+            newPoint = [
+                Math.cos(angle),
+                Math.sin(angle)
+            ];
 
-            for (i = 0; inShape && i < this.dimension; i++) {
-                newPoint[i] = currentPoint[i] + newPoint[i] * distance;
+            for (i = 0; inShape && i < 2; i++) {
+                newPoint[i] = currentPoint[i] + newPoint[i] * this.minDistancePlusEpsilon;
                 inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
             }
 
             if (inShape && !this.inNeighbourhood(newPoint)) {
                 return this.directAddPoint(newPoint);
             }
+
+            angle += angleIncrement;
         }
 
         if (tries === this.maxTries) {

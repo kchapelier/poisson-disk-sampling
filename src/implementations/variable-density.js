@@ -21,6 +21,8 @@ function euclideanDistance (point1, point2) {
     return Math.sqrt(result);
 }
 
+const epsilon = 1e-14;
+
 /**
  * VariableDensityPDS constructor
  * @param {object} options Options
@@ -48,10 +50,11 @@ function VariableDensityPDS (options, rng) {
     this.rng = rng || Math.random;
 
     this.dimension = this.shape.length;
-    this.deltaDistance = this.maxDistance - this.minDistance;
+    this.minDistancePlusEpsilon = this.minDistance + epsilon;
+    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon - epsilon);
     this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
 
-    this.neighbourhood = getNeighbourhood(this.dimension);
+    this.neighbourhood = getNeighbourhood(this.dimension, options.noCheckOrder);
 
     this.currentPoint = null;
     this.currentDistance = 0;
@@ -74,6 +77,7 @@ VariableDensityPDS.prototype.shape = null;
 VariableDensityPDS.prototype.dimension = null;
 VariableDensityPDS.prototype.minDistance = null;
 VariableDensityPDS.prototype.maxDistance = null;
+VariableDensityPDS.prototype.minDistancePlusEpsilon = null;
 VariableDensityPDS.prototype.deltaDistance = null;
 VariableDensityPDS.prototype.cellSize = null;
 VariableDensityPDS.prototype.maxTries = null;
@@ -173,12 +177,15 @@ VariableDensityPDS.prototype.inNeighbourhood = function (point) {
         for (dimension = 0; dimension < dimensionNumber; dimension++) {
             currentDimensionValue = ((point[dimension] / this.cellSize) | 0) + this.neighbourhood[neighbourIndex][dimension];
 
-            if (currentDimensionValue >= 0 && currentDimensionValue < this.gridShape[dimension]) {
-                internalArrayIndex += currentDimensionValue * stride[dimension];
+            if (currentDimensionValue < 0 || currentDimensionValue >= this.gridShape[dimension]) {
+                internalArrayIndex = -1;
+                break;
             }
+
+            internalArrayIndex += currentDimensionValue * stride[dimension];
         }
 
-        if (this.grid.data[internalArrayIndex].length > 0) {
+        if (internalArrayIndex !== -1 && this.grid.data[internalArrayIndex].length > 0) {
             for (var i = 0; i < this.grid.data[internalArrayIndex].length; i++) {
                 existingPoint = this.samplePoints[this.grid.data[internalArrayIndex][i]];
                 existingPointDistance = this.sampleDistance[this.grid.data[internalArrayIndex][i]];
@@ -186,7 +193,6 @@ VariableDensityPDS.prototype.inNeighbourhood = function (point) {
                 var minDistance = Math.min(existingPointDistance, pointDistance);
                 var maxDistance = Math.max(existingPointDistance, pointDistance);
                 var dist = minDistance + (maxDistance - minDistance) * this.bias;
-
 
                 if (euclideanDistance(point, existingPoint) < this.minDistance + this.deltaDistance * dist) {
                     return true;
@@ -224,7 +230,7 @@ VariableDensityPDS.prototype.next = function () {
 
         for (tries = 0; tries < this.maxTries; tries++) {
             inShape = true;
-            distance = this.minDistance + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.bias);
+            distance = this.minDistancePlusEpsilon + this.deltaDistance * (currentDistance + (1 - currentDistance) * this.bias);
 
             if (this.dimension === 2) {
                 angle = this.rng() * Math.PI * 2;
