@@ -21,7 +21,7 @@ function euclideanDistance (point1, point2) {
     return Math.sqrt(result);
 }
 
-const epsilon = 1e-14;
+const epsilon = 2e-14;
 
 /**
  * VariableDensityPDS constructor
@@ -51,10 +51,10 @@ function VariableDensityPDS (options, rng) {
 
     this.dimension = this.shape.length;
     this.minDistancePlusEpsilon = this.minDistance + epsilon;
-    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon - epsilon);
+    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon);
     this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
 
-    this.neighbourhood = getNeighbourhood(this.dimension, options.noCheckOrder);
+    this.neighbourhood = getNeighbourhood(this.dimension);
 
     this.currentPoint = null;
     this.currentDistance = 0;

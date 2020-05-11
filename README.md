@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.0/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.1/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -212,6 +212,7 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
  * Creative Experiments by Lionel Radisson: [#1](https://twitter.com/MAKIO135/status/1225665997341749248) / [#2](https://twitter.com/MAKIO135/status/1224948519871696901)
  * ["Poisson disc squares", by Matt DesLauriers](https://twitter.com/mattdesl/status/973197660617355269)
  * [Mapgen4, a procedural wilderness map generator by Amit Patel](https://github.com/redblobgames/mapgen4)
+ * [stsmapgen, a Slay the Spire-inspired procedural map generator by torin](https://github.com/yurkth/stsmapgen)
 
 ## Implementation notes
 
@@ -230,6 +231,11 @@ var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/var
 ```
 
 ## History
+
+### [2.2.1](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.1) (2020-05-11) :
+
+- Minor performance-related tweaks
+- Update dev dependencies
 
 ### [2.2.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.0) (2020-02-17) :
 

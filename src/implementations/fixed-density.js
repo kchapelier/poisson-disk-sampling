@@ -21,7 +21,7 @@ function squaredEuclideanDistance (point1, point2) {
     return result;
 }
 
-const epsilon = 1e-14;
+const epsilon = 2e-14;
 
 /**
  * FixedDensityPDS constructor
@@ -48,10 +48,10 @@ function FixedDensityPDS (options, rng) {
     this.dimension = this.shape.length;
     this.squaredMinDistance = this.minDistance * this.minDistance;
     this.minDistancePlusEpsilon = this.minDistance + epsilon;
-    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon - epsilon);
+    this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon);
     this.cellSize = this.minDistance / Math.sqrt(this.dimension);
 
-    this.neighbourhood = getNeighbourhood(this.dimension, options.noCheckOrder);
+    this.neighbourhood = getNeighbourhood(this.dimension);
 
     this.currentPoint = null;
     this.processList = [];
@@ -168,7 +168,7 @@ FixedDensityPDS.prototype.inNeighbourhood = function (point) {
                 internalArrayIndex = -1;
                 break;
             }
-            
+
             internalArrayIndex += currentDimensionValue * stride[dimension];
         }
 

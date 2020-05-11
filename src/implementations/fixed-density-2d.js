@@ -2,15 +2,15 @@
 
 /**
  * The code below is experimental and not shipped to NPM.
- * 
+ *
  * This is a baseline implementation for a 2d-only fixed density poisson disk sampling.
- * 
+ *
  */
 
 var tinyNDArray = require('../tiny-ndarray').integer,
     getNeighbourhood = require('../neighbourhood');
 
-const epsilon = 1e-14;
+const epsilon = 2e-14;
 
 /**
  * FixedDensityPDS constructor
@@ -36,7 +36,7 @@ function FixedDensityPDS (options, rng) {
     this.minDistancePlusEpsilon = this.minDistance + epsilon;
     this.cellSize = this.minDistance / Math.sqrt(2);
 
-    this.neighbourhood = getNeighbourhood(2, options.noCheckOrder);
+    this.neighbourhood = getNeighbourhood(2);
 
     //console.log(this.neighbourhood);
 
