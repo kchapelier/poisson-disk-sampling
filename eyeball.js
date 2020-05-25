@@ -38,7 +38,7 @@ if (dimensions === 3) {
 
   outputPng(sampling, function (sampling, pngData) {
     sampling.getAllPoints().forEach(function (point) {
-      var pixelIndex = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
+      var pixelIndex = (Math.ceil(point[0]) + Math.ceil(point[1]) * sampling.shape[0]) * 4;
       var intensity = 255 - 255 * Math.pow((1 + point[2]) / sampling.shape[2], 1.5) | 0;
       pngData[pixelIndex] = pngData[pixelIndex + 1] = pngData[pixelIndex + 2] = intensity;
     });
@@ -57,7 +57,7 @@ if (dimensions === 3) {
 
     sampling.getAllPoints().forEach(function (point) {
       i++;
-      var pixelIndex = (Math.round(point[0]) + Math.round(point[1]) * sampling.shape[0]) * 4;
+      var pixelIndex = (Math.floor(point[0]) + Math.floor(point[1]) * sampling.shape[0]) * 4;
       var intensity = 50 + (Math.cos(i / 50) + 1) / 2 * 205 | 0;
       pngData[pixelIndex] = pngData[pixelIndex + 1] = pngData[pixelIndex + 2] = intensity;
     });

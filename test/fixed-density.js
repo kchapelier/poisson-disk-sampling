@@ -271,5 +271,18 @@ describe('PDS with fixed density', function () {
 
             verifyResultPoints(points, 2, 4, 10);
         });
+
+        it('should be able to spaw point in a shape with dimensions of 1', function () {
+            var pds = new PDS({
+                shape: [1, 1],
+                minDistance: 0.2,
+                maxDistance: 0.4,
+                tries: 20
+            });
+
+            var points = pds.fill();
+
+            points.length.should.be.above(1);
+        });
     });
 });

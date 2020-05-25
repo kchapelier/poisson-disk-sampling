@@ -328,6 +328,22 @@ describe('PDS with variable density', function () {
             verifyResultPoints(points, 2, 4, 10);
         });
 
+        it('should be able to spaw point in a shape with dimensions of 1', function () {
+            var pds = new PDS({
+                shape: [1, 1],
+                minDistance: 0.2,
+                maxDistance: 0.4,
+                tries: 20,
+                distanceFunction: function () {
+                    return Math.random();
+                }
+            });
+
+            var points = pds.fill();
+
+            points.length.should.be.above(1);
+        });
+
         it('should respect the distance function', function () {
             var pds = new PDS({
                 shape: [50, 50],

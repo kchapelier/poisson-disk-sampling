@@ -244,7 +244,7 @@ VariableDensityPDS.prototype.next = function () {
 
             for (i = 0; inShape && i < this.dimension; i++) {
                 newPoint[i] = currentPoint[i] + newPoint[i] * distance;
-                inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
+                inShape = (newPoint[i] >= 0 && newPoint[i] < this.shape[i])
             }
 
             if (inShape && !this.inNeighbourhood(newPoint)) {
