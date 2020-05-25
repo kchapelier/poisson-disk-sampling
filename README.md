@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.1/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.2/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -231,6 +231,11 @@ var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/var
 ```
 
 ## History
+
+### [2.2.2](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.2) (2020-05-25) :
+
+- Minor performance-related tweaks for 3D and higher dimensions
+- Fix an issue causing the points to be generated in the [0, size-1] range instead of the [0, size) range
 
 ### [2.2.1](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.1) (2020-05-11) :
 
