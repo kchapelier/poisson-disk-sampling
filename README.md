@@ -209,6 +209,7 @@ When doing multiple samplings in the same grid, it is preferable to reuse the sa
 
 ## Usages in the wild
 
+ * Image-based point clouds by Dmitri Cherniak: [#1](https://twitter.com/dmitricherniak/status/1348039557523116037) / [#2](https://twitter.com/dmitricherniak/status/1348065708333273090)
  * Creative Experiments by Lionel Radisson: [#1](https://twitter.com/MAKIO135/status/1225665997341749248) / [#2](https://twitter.com/MAKIO135/status/1224948519871696901)
  * ["Poisson disc squares", by Matt DesLauriers](https://twitter.com/mattdesl/status/973197660617355269)
  * [Mapgen4, a procedural wilderness map generator by Amit Patel](https://github.com/redblobgames/mapgen4)
