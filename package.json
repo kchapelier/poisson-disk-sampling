@@ -18,7 +18,7 @@
     "src/tiny-ndarray.js",
     "src/implementations/fixed-density.js",
     "src/implementations/variable-density.js",
-    "./index.d.ts"
+    "index.d.ts"
   ],
   "repository": {
     "type": "git",
