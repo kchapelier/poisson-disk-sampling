@@ -260,6 +260,26 @@ FixedDensityPDS.prototype.getAllPoints = function () {
 };
 
 /**
+ * Get the closest points to an input Point
+ * @param {Array} point Point
+ * @returns {Array[]} Points closest to input Point
+ */
+FixedDensityPDS.prototype.getClosestPoint = function (point) {
+
+    var closestPoints = this.samplePoints[0] ? [this.samplePoints[0]] : null;
+    var closestDistance = this.samplePoints[0] ? squaredEuclideanDistance(point, this.samplePoints[0]) : null;
+    for (let i = 1; i < this.samplePoints.length; i++) {
+        if (closestDistance < squaredEuclideanDistance(point, this.samplePoints[i])) {
+            closestPoints = [this.samplePoints[i]]
+        } else if (closestDistance === squaredEuclideanDistance(point, this.samplePoints[i])) {
+            closestPoints.push(this.samplePoints[i])
+        }
+    }
+
+    return closestPoints;
+};
+
+/**
  * Get all the points in the grid along with the result of the distance function.
  * @throws Will always throw an error.
  */
