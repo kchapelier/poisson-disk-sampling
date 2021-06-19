@@ -129,8 +129,8 @@ declare module "poisson-disk-sampling" {
 
     export function getNeighbourhoodMemoized(dimensionNumber: number): any[];
 
-    let PoissonDiskSampling: typeof pds.PoissonDiskSampling;
-    export default PoissonDiskSampling
+    var PoissonDiskSampling: typeof pds.PoissonDiskSampling;
+    export = PoissonDiskSampling
 
     export function sampleSphere(d: number, rng: (...params: any[]) => any): any[];
 }
