@@ -198,6 +198,87 @@ describe('PDS with fixed density', function () {
         });
     });
 
+    describe('getClosestPoints()', function () {
+        it('should return the closest points in 2D shape', function () {
+            var pds = new PDS({ shape: [50, 30], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15]);
+            pds.addPoint([14, 18]);
+            pds.addPoint([12, 25]);
+            pds.addPoint([10, 5]);
+            var point = pds.getClosestPoints([10, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(1);
+            point.should.to.eql([[14, 18]])
+        });
+        it('should return the closest points in 3D shape', function () {
+            var pds = new PDS({ shape: [50, 30, 20], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15, 5]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([12, 25, 13]);
+            pds.addPoint([10, 5, 2]);
+            var point = pds.getClosestPoints([10, 15, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(1);
+            point.should.to.eql([[14, 18, 16]])
+        });
+        it('should return two closest points, as they are the same', function () {
+            var pds = new PDS({ shape: [50, 30, 20], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15, 5]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([12, 25, 13]);
+            pds.addPoint([10, 5, 2]);
+            var point = pds.getClosestPoints([10, 15, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(2);
+            point.should.to.eql([[14, 18, 16], [14, 18, 16]])
+        });
+    });
+
+    describe('getFarthestPoints()', function () {
+        it('should return the farthest points in 2D shape', function () {
+            var pds = new PDS({ shape: [50, 30], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15]);
+            pds.addPoint([14, 18]);
+            pds.addPoint([12, 25]);
+            pds.addPoint([10, 5]);
+            var point = pds.getFarthestPoints([10, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(1);
+            point.should.to.eql([[12, 25]])
+        });
+        it('should return the farthest points in 3D shape', function () {
+            var pds = new PDS({ shape: [50, 30, 20], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15, 5]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([12, 25, 13]);
+            pds.addPoint([10, 5, 2]);
+            var point = pds.getFarthestPoints([10, 15, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(1);
+            point.should.to.eql([[10, 5, 2]])
+        });
+        it('should return two farthest points, as they are the same', function () {
+            var pds = new PDS({ shape: [50, 30, 20], minDistance: 8, maxDistance: 8, tries: 10 });
+            pds.addPoint([16, 15, 5]);
+            pds.addPoint([14, 18, 16]);
+            pds.addPoint([12, 25, 13]);
+            pds.addPoint([10, 5, 2]);
+            pds.addPoint([10, 5, 2]);
+            var point = pds.getFarthestPoints([10, 15, 15]);
+
+            point.should.be.instanceof(Array);
+            point.length.should.equal(2);
+            point.should.to.eql([[10, 5, 2], [10, 5, 2]])
+        });
+    });
+
     describe('next()', function () {
         it('should return the point it successfully placed in the grid', function () {
             var pds = new PDS({ shape: [50, 30], minDistance: 4, maxDistance: 8, tries: 10 });

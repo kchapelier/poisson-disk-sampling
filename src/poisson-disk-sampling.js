@@ -70,12 +70,21 @@ PoissonDiskSampling.prototype.getAllPoints = function () {
 };
 
 /**
- * Get the closest point to an input Point
+ * Get the closest points to an input Point
  * @param {Array} point Point
- * @returns {Array} Point closest to input Point
+ * @returns {Array} Points closest to input Point
  */
-PoissonDiskSampling.prototype.getClosestPoint = function (point) {
-    return this.implementation.getClosestPoint(point);
+PoissonDiskSampling.prototype.getClosestPoints = function (point) {
+    return this.implementation.getClosestPoints(point);
+};
+
+/**
+ * Get the farthest point to an input Point
+ * @param {Array} point Point
+ * @returns {Array} Points farthest to input Point
+ */
+PoissonDiskSampling.prototype.getFarthestPoints = function (point) {
+    return this.implementation.getFarthestPoints(point);
 };
 
 /**

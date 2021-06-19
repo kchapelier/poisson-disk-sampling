@@ -288,19 +288,43 @@ VariableDensityPDS.prototype.getAllPoints = function () {
  * @param {Array} point Point
  * @returns {Array[]} Points closest to input Point
  */
-VariableDensityPDS.prototype.getClosestPoint = function (point) {
+VariableDensityPDS.prototype.getClosestPoints = function (point) {
 
     var closestPoints = this.samplePoints[0] ? [this.samplePoints[0]] : null;
     var closestDistance = this.samplePoints[0] ? euclideanDistance(point, this.samplePoints[0]) : null;
     for (let i = 1; i < this.samplePoints.length; i++) {
-        if (closestDistance < euclideanDistance(point, this.samplePoints[i])) {
+        var distance = euclideanDistance(point, this.samplePoints[i])
+        if (closestDistance > distance) {
             closestPoints = [this.samplePoints[i]]
-        } else if (closestDistance === euclideanDistance(point, this.samplePoints[i])) {
+            closestDistance = distance
+        } else if (closestDistance === distance) {
             closestPoints.push(this.samplePoints[i])
         }
     }
 
     return closestPoints;
+};
+
+/**
+ * Get the farthest points to an input Point
+ * @param {Array} point Point
+ * @returns {Array[]} Points farthest to input Point
+ */
+VariableDensityPDS.prototype.getFarthestPoints = function (point) {
+
+    var farthestPoints = this.samplePoints[0] ? [this.samplePoints[0]] : null;
+    var farthestDistance = this.samplePoints[0] ? euclideanDistance(point, this.samplePoints[0]) : null;
+    for (let i = 1; i < this.samplePoints.length; i++) {
+        var distance = euclideanDistance(point, this.samplePoints[i])
+        if (farthestDistance < distance) {
+            farthestPoints = [this.samplePoints[i]]
+            farthestDistance = distance
+        } else if (farthestDistance === distance) {
+            farthestPoints.push(this.samplePoints[i])
+        }
+    }
+
+    return farthestPoints;
 };
 
 /**
