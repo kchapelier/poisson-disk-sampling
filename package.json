@@ -3,7 +3,6 @@
   "version": "2.2.2",
   "description": "Poisson disk sampling in arbitrary dimensions",
   "main": "src/poisson-disk-sampling.js",
-  "types": "./index.d.ts",
   "scripts": {
     "build": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling > build/poisson-disk-sampling.js",
     "build-min": "browserify src/poisson-disk-sampling.js --s PoissonDiskSampling | terser --ecma 5 > build/poisson-disk-sampling.min.js",
