@@ -1,7 +1,5 @@
 declare module pds {
-    
     class FixedDensityPDS {
-        
         public shape: number[]
         public minDistance: number
         public maxDistance: number
@@ -26,32 +24,43 @@ declare module pds {
         }, rng?: ((...params: any[]) => any) | null);
 
         addRandomPoint(): any[];
+
         addPoint(point: any[]): any[] | null;
 
         protected directAddPoint(point: any[]): any[];
+
         protected inNeighbourhood(point: any[]): boolean;
 
         next(): any[] | null;
+
         fill(): any[][];
+
         getAllPoints(): any[][];
+
         getAllPointsWithDistance(): void;
+
         reset(): void;
+
         addRandomPoint(): any[];
+
         addPoint(point: any[]): any[] | null;
-        
+
         protected directAddPoint(point: any[]): any[];
+
         protected inNeighbourhood(point: any[]): boolean;
-        
+
         next(): any[] | null;
+
         fill(): any[][];
+
         getAllPoints(): any[][];
+
         getAllPointsWithDistance(): void;
+
         reset(): void;
-        
     }
 
     class VariableDensityPDS {
-        
         constructor(options: {
             shape: any[];
             minDistance: number;
@@ -62,21 +71,25 @@ declare module pds {
         }, rng: ((...params: any[]) => any) | null);
 
         addRandomPoint(): any[];
+
         addPoint(point: any[]): any[] | null;
-        
+
         protected directAddPoint(point: any[]): any[];
+
         protected inNeighbourhood(point: any[]): boolean;
-        
+
         next(): any[] | null;
+
         fill(): any[][];
+
         getAllPoints(): any[][];
+
         getAllPointsWithDistance(): any[][];
+
         reset(): void;
-        
     }
 
     class PoissonDiskSampling {
-        
         public shape: number[]
         public implementation: FixedDensityPDS | VariableDensityPDS
 
@@ -90,28 +103,34 @@ declare module pds {
         }, rng?: ((...params: any[]) => any) | null);
 
         addRandomPoint(): any[];
+
         addPoint(point: any[]): any[] | null;
+
         next(): any[] | null;
+
         fill(): any[][];
+
         getAllPoints(): any[][];
+
         getAllPointsWithDistance(): any[][];
+
         reset(): void;
-        
     }
 }
 
 declare module "poisson-disk-sampling" {
-    
     export var tinyNDArray: any;
 
     export function squaredEuclideanDistance(point1: any[], point2: any[]): number;
+
     export function euclideanDistance(point1: any[], point2: any[]): number;
+
     export function getNeighbourhood(dimensionNumber: number): any[];
+
     export function getNeighbourhoodMemoized(dimensionNumber: number): any[];
 
     let PoissonDiskSampling: typeof pds.PoissonDiskSampling;
     export default PoissonDiskSampling
 
     export function sampleSphere(d: number, rng: (...params: any[]) => any): any[];
-    
 }
