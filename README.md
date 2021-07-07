@@ -231,6 +231,20 @@ or
 var PoissonDiskSampling = require('poisson-disk-sampling/src/implementations/variable-density');
 ```
 
+## TypeScript definitions
+
+TypeScripts definitions (`.d.ts`) provided by [Aliyss](https://github.com/Aliyss) are available through DefinitelyTyped. They can be installed locally using the following commands:
+
+```
+npm install --save-dev @types/poisson-disk-sampling
+```
+
+or
+
+```
+yarn add @types/poisson-disk-sampling --dev
+```
+
 ## History
 
 ### [2.2.2](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.2) (2020-05-25) :
