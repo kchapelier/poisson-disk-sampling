@@ -319,10 +319,6 @@ yarn add @types/poisson-disk-sampling --dev
 
 - First release
 
-## Roadmap
-
-- Make it possible to import/require only one of the implementation.
-
 ## How to contribute ?
 
 For new features and other enhancements, please make sure to contact me beforehand, either on [Twitter](https://twitter.com/kchplr) or through an issue on Github.
