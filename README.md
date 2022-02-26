@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.2/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.3/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -246,6 +246,10 @@ yarn add @types/poisson-disk-sampling --dev
 ```
 
 ## History
+
+### [2.2.3](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.3) (2022-02-26) :
+
+- Fix outdated CDN builds, no actual changes to the code provided through npm
 
 ### [2.2.2](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.2) (2020-05-25) :
 
