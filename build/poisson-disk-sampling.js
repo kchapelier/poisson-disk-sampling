@@ -243,7 +243,7 @@ FixedDensityPDS.prototype.next = function () {
 
             for (i = 0; inShape && i < this.dimension; i++) {
                 newPoint[i] = currentPoint[i] + newPoint[i] * distance;
-                inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
+                inShape = (newPoint[i] >= 0 && newPoint[i] < this.shape[i])
             }
 
             if (inShape && !this.inNeighbourhood(newPoint)) {
@@ -559,7 +559,7 @@ VariableDensityPDS.prototype.next = function () {
 
             for (i = 0; inShape && i < this.dimension; i++) {
                 newPoint[i] = currentPoint[i] + newPoint[i] * distance;
-                inShape = (newPoint[i] >= 0 && newPoint[i] <= this.shape[i] - 1)
+                inShape = (newPoint[i] >= 0 && newPoint[i] < this.shape[i])
             }
 
             if (inShape && !this.inNeighbourhood(newPoint)) {
@@ -660,6 +660,18 @@ function getNeighbourhood (dimensionNumber) {
         origin = [],
         dimension;
 
+    // filter out neighbours who are too far from the center cell
+    // the impact of this, performance wise, is surprisingly small, even in 3d and higher dimensions
+    neighbourhood = neighbourhood.filter(function (n) {
+        var dist = 0;
+
+        for (var d = 0; d < dimensionNumber; d++) {
+            dist += Math.pow(Math.max(0, Math.abs(n[d]) - 1), 2);
+        }
+
+        return dist < dimensionNumber; // cellSize = Math.sqrt(this.dimension)
+    });
+
     for (dimension = 0; dimension < dimensionNumber; dimension++) {
         origin.push(0);
     }
@@ -691,7 +703,22 @@ function getNeighbourhood (dimensionNumber) {
     return neighbourhood;
 }
 
-module.exports = getNeighbourhood;
+var neighbourhoodCache = {};
+
+/**
+ * Get the neighbourhood ordered by distance, including the origin point
+ * @param {int} dimensionNumber Number of dimensions
+ * @returns {Array} Neighbourhood
+ */
+function getNeighbourhoodMemoized (dimensionNumber) {
+    if (!neighbourhoodCache[dimensionNumber]) {
+        neighbourhoodCache[dimensionNumber] = getNeighbourhood(dimensionNumber);
+    }
+
+    return neighbourhoodCache[dimensionNumber];
+}
+
+module.exports = getNeighbourhoodMemoized;
 },{"moore":1}],5:[function(require,module,exports){
 "use strict";
 
