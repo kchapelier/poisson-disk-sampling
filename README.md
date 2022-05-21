@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.2.3/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.3.0/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -30,6 +30,7 @@ A compiled version for web browsers is also available on a CDN:
 - Can be used with a custom RNG function.
 - Allow the configuration of the max number of tries, the minimum distance and the maximum distance between each points.
 - Allow the use of custom function to drive the density of the distribution.
+- Similar general API as [fast-2d-poisson-disk-sampling](https://github.com/kchapelier/fast-2d-poisson-disk-sampling) and [jittered-hexagonal-grid-sampling](https://github.com/kchapelier/jittered-hexagonal-grid-sampling).
 
 ## Basic example
 
@@ -88,6 +89,8 @@ console.log(points); // array of sample points, themselves represented as simple
   - *distanceFunction :* Function to control the distance between each point depending on their position, must return a value between 0 and 1.
   - *bias :* When using a distanceFunction, will indicate which point constraint takes priority when evaluating two points (0 for the lowest distance, 1 for the highest distance), defaults to 0.
 - *rng :* A function to use as random number generator, defaults to Math.random.
+
+The following code will allow the generation of points where both coordinates will range from *0 up to 50* (including 0, but not including 50, **0 <= c < 50**).
 
 ```js
 // Poisson disk sampling in a 2D square
@@ -246,6 +249,11 @@ yarn add @types/poisson-disk-sampling --dev
 ```
 
 ## History
+
+### [2.3.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.3.0) (2022-05-21) :
+
+- Fix addPoint() erroneously accepting points on the outer bounds of the shape
+- Update dev dependencies
 
 ### [2.2.3](https://github.com/kchapelier/poisson-disk-sampling/tree/2.2.3) (2022-02-26) :
 
