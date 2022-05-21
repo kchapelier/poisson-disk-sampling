@@ -111,7 +111,7 @@ FixedDensityPDS.prototype.addPoint = function (point) {
 
     if (point.length === this.dimension) {
         for (dimension = 0; dimension < this.dimension && valid; dimension++) {
-            valid = (point[dimension] >= 0 && point[dimension] <= this.shape[dimension]);
+            valid = (point[dimension] >= 0 && point[dimension] < this.shape[dimension]);
         }
     } else {
         valid = false;

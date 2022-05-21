@@ -236,6 +236,20 @@ describe('PDS with variable density', function () {
             points.length.should.equal(0);
         });
 
+        it('should not allow to add a point with a coordinate on the outer bound of the shape', function () {
+            var pds = new PDS({ shape: [50, 30], radius: 8, tries: 10 });
+
+            var point1 = pds.addPoint([5, 30]);
+            var point2 = pds.addPoint([50, 2]);
+
+            should.equal(point1, null);
+            should.equal(point2, null);
+
+            var points = pds.getAllPoints();
+
+            points.length.should.equal(0);
+        });
+
         it('should ignore the distance constraints', function () {
             var pds = new PDS({ shape: [2, 2], minDistance: 8, maxDistance: 8, tries: 10, distanceFunction: Math.random });
 
