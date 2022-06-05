@@ -21,7 +21,7 @@ yarn add poisson-disk-sampling
 A compiled version for web browsers is also available on a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.3.0/build/poisson-disk-sampling.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kchapelier/poisson-disk-sampling@2.3.1/build/poisson-disk-sampling.min.js"></script>
 ```
 
 ## Features
@@ -249,6 +249,10 @@ yarn add @types/poisson-disk-sampling --dev
 ```
 
 ## History
+
+### [2.3.1](https://github.com/kchapelier/poisson-disk-sampling/tree/2.3.1) (2022-06-05) :
+
+- Slightly better performances and point density when working with a large shape
 
 ### [2.3.0](https://github.com/kchapelier/poisson-disk-sampling/tree/2.3.0) (2022-05-21) :
 

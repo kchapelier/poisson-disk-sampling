@@ -21,8 +21,6 @@ function euclideanDistance (point1, point2) {
     return Math.sqrt(result);
 }
 
-const epsilon = 2e-14;
-
 /**
  * VariableDensityPDS constructor
  * @param {object} options Options
@@ -49,8 +47,16 @@ function VariableDensityPDS (options, rng) {
 
     this.rng = rng || Math.random;
 
+    // to replace with floatPrecisionMitigation = Math.max(1, Math.max(...this.shape) / 64 | 0) on the next major update
+    var maxShape = 0;
+    for (var i = 0; i < this.shape.length; i++) {
+        maxShape = Math.max(maxShape, this.shape[i]);
+    }
+    var floatPrecisionMitigation = Math.max(1, maxShape / 128 | 0);
+    var epsilonDistance = 1e-14 * floatPrecisionMitigation;
+
     this.dimension = this.shape.length;
-    this.minDistancePlusEpsilon = this.minDistance + epsilon;
+    this.minDistancePlusEpsilon = this.minDistance + epsilonDistance;
     this.deltaDistance = Math.max(0, this.maxDistance - this.minDistancePlusEpsilon);
     this.cellSize = this.maxDistance / Math.sqrt(this.dimension);
 

@@ -41,13 +41,16 @@ function benchmark (shape, minDistance, maxDistance, tries, iterations) {
 
     time = process.hrtime(time);
 
-    console.log('[' + shape.join('x') + ' minDist 8 maxDist 8 retries 20]: ' + (toMs(time) / iterations).toFixed(3) + 'ms for ~' + (s/iterations|0)+' points');
+    console.log(
+        '[' + shape.join('x') + ' minDist ' + minDistance + ' maxDist ' + maxDistance + ' retries ' + tries + ']: ' +
+        (toMs(time) / iterations).toFixed(3) + 'ms for ~' + (s/iterations|0) + ' points'
+    );
 }
 
 console.log();
 
 benchmark([125, 125, 125, 125], 8, 8, 20, 8);
 benchmark([400, 400, 400], 8, 8, 20, 8);
-benchmark([800, 800], 8, 8, 20, 8);
+benchmark([4000, 4000], 8, 8, 20, 8);
 
 console.log();
