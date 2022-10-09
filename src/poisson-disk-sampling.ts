@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-var FixedDensityPDS = require('./implementations/fixed-density');
-var VariableDensityPDS = require('./implementations/variable-density');
+import FixedDensityPDS from './implementations/fixed-density.ts';
+import VariableDensityPDS from './implementations/variable-density.ts';
 
 /**
  * PoissonDiskSampling constructor
@@ -15,14 +15,14 @@ var VariableDensityPDS = require('./implementations/variable-density');
  * @param {function|null} [rng] RNG function, defaults to Math.random
  * @constructor
  */
-function PoissonDiskSampling (options, rng) {
-    this.shape = options.shape;
+function PoissonDiskSampling(options, rng) {
+	this.shape = options.shape;
 
-    if (typeof options.distanceFunction === 'function') {
-        this.implementation = new VariableDensityPDS(options, rng);
-    } else {
-        this.implementation = new FixedDensityPDS(options, rng);
-    }
+	if (typeof options.distanceFunction === 'function') {
+		this.implementation = new VariableDensityPDS(options, rng);
+	} else {
+		this.implementation = new FixedDensityPDS(options, rng);
+	}
 }
 
 PoissonDiskSampling.prototype.implementation = null;
@@ -32,7 +32,7 @@ PoissonDiskSampling.prototype.implementation = null;
  * @returns {Array} The point added to the grid
  */
 PoissonDiskSampling.prototype.addRandomPoint = function () {
-    return this.implementation.addRandomPoint();
+	return this.implementation.addRandomPoint();
 };
 
 /**
@@ -41,7 +41,7 @@ PoissonDiskSampling.prototype.addRandomPoint = function () {
  * @returns {Array|null} The point added to the grid, null if the point is out of the bound or not of the correct dimension
  */
 PoissonDiskSampling.prototype.addPoint = function (point) {
-    return this.implementation.addPoint(point);
+	return this.implementation.addPoint(point);
 };
 
 /**
@@ -49,7 +49,7 @@ PoissonDiskSampling.prototype.addPoint = function (point) {
  * @returns {Array|null} The added point or null
  */
 PoissonDiskSampling.prototype.next = function () {
-    return this.implementation.next();
+	return this.implementation.next();
 };
 
 /**
@@ -58,7 +58,7 @@ PoissonDiskSampling.prototype.next = function () {
  * @returns {Array[]} Sample points
  */
 PoissonDiskSampling.prototype.fill = function () {
-    return this.implementation.fill();
+	return this.implementation.fill();
 };
 
 /**
@@ -66,7 +66,7 @@ PoissonDiskSampling.prototype.fill = function () {
  * @returns {Array[]} Sample points
  */
 PoissonDiskSampling.prototype.getAllPoints = function () {
-    return this.implementation.getAllPoints();
+	return this.implementation.getAllPoints();
 };
 
 /**
@@ -75,14 +75,14 @@ PoissonDiskSampling.prototype.getAllPoints = function () {
  * @returns {Array[]} Sample points with their distance function result
  */
 PoissonDiskSampling.prototype.getAllPointsWithDistance = function () {
-    return this.implementation.getAllPointsWithDistance();
+	return this.implementation.getAllPointsWithDistance();
 };
 
 /**
  * Reinitialize the grid as well as the internal state
  */
 PoissonDiskSampling.prototype.reset = function () {
-    this.implementation.reset();
+	this.implementation.reset();
 };
 
-module.exports = PoissonDiskSampling;
+export default PoissonDiskSampling;
