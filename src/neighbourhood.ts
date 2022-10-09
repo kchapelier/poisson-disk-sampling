@@ -1,6 +1,6 @@
 'use strict';
 
-import moore from 'npm:moore@~1.0.0';
+import moore from 'https://esm.sh/moore@1.0.0';
 import { NeighbourhoodI } from './types.ts';
 
 /**
