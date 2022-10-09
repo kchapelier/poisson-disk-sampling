@@ -1,15 +1,16 @@
 'use strict';
 
 import moore from 'npm:moore@~1.0.0';
+import { NeighbourhoodI } from './types.ts';
 
 /**
  * Get the neighbourhood ordered by distance, including the origin point
  * @param {int} dimensionNumber Number of dimensions
  * @returns {Array} Neighbourhood
  */
-function getNeighbourhood(dimensionNumber) {
-	var neighbourhood = moore(2, dimensionNumber),
-		origin = [],
+function getNeighbourhood(dimensionNumber: number) {
+	var neighbourhood: NeighbourhoodI = moore(2, dimensionNumber),
+		origin: number[] = [],
 		dimension;
 
 	// filter out neighbours who are too far from the center cell
@@ -55,14 +56,14 @@ function getNeighbourhood(dimensionNumber) {
 	return neighbourhood;
 }
 
-var neighbourhoodCache = {};
+var neighbourhoodCache: Record<number, NeighbourhoodI> = {};
 
 /**
  * Get the neighbourhood ordered by distance, including the origin point
  * @param {int} dimensionNumber Number of dimensions
  * @returns {Array} Neighbourhood
  */
-function getNeighbourhoodMemoized(dimensionNumber) {
+function getNeighbourhoodMemoized(dimensionNumber: number): NeighbourhoodI {
 	if (!neighbourhoodCache[dimensionNumber]) {
 		neighbourhoodCache[dimensionNumber] = getNeighbourhood(dimensionNumber);
 	}

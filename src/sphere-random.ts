@@ -1,5 +1,7 @@
 'use strict';
 
+import { RandomFloatFn } from './types.ts';
+
 // sphere-random module by Mikola Lysenko under the MIT License
 // waiting for https://github.com/scijs/sphere-random/pull/1 to be merged
 
@@ -8,7 +10,7 @@
  * @param {Function} rng
  * @returns {Array}
  */
-export default function sampleSphere(d, rng) {
+export default function sampleSphere(d: number, rng: RandomFloatFn) {
 	var v = new Array(d),
 		d2 = Math.floor(d / 2) << 1,
 		r2 = 0.0,

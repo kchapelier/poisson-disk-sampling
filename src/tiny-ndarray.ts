@@ -1,4 +1,6 @@
-function tinyNDArrayOfInteger(gridShape) {
+import { TinyNDArrayI } from './types.ts';
+
+function tinyNDArrayOfInteger(gridShape: number[]): TinyNDArrayI<Uint32Array> {
 	var dimensions = gridShape.length,
 		totalLength = 1,
 		stride = new Array(dimensions),
@@ -15,7 +17,7 @@ function tinyNDArrayOfInteger(gridShape) {
 	};
 }
 
-function tinyNDArrayOfArray(gridShape) {
+function tinyNDArrayOfArray(gridShape: number[]): TinyNDArrayI<Array<number[]>> {
 	var dimensions = gridShape.length,
 		totalLength = 1,
 		stride = new Array(dimensions),
